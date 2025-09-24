@@ -1,0 +1,219 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <div class="bg-blue-900 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-white">Users Management</h1>
+          <p class="text-blue-300 mt-1">Manage all users in the system</p>
+        </div>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+          <i class="fas fa-plus mr-2"></i>Add User
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-blue-900 rounded-lg border border-blue-800 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center mr-4">
+            <i class="fas fa-users text-xl text-blue-300"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{{ getTotalUsers() }}</div>
+            <div class="text-blue-300 text-sm">Total Users</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- You can add more cards here if you add more backend-supported stats -->
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-blue-900 rounded-lg border border-blue-800 p-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Search Users</label>
+          <div class="relative">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()"
+              placeholder="Search by name or email..."
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+            <i class="fas fa-search absolute right-3 top-3 text-blue-400"></i>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Role</label>
+          <select 
+            [(ngModel)]="selectedRole"
+            (change)="onRoleChange()"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="all">All Roles</option>
+            <option value="STUDENT">Student</option>
+            <option value="INSTRUCTOR">Instructor</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Status</label>
+          <select 
+            [(ngModel)]="selectedStatus"
+            (change)="onStatusChange()"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="all">All Status</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+            <option value="SUSPENDED">Suspended</option>
+          </select>
+        </div>
+
+        <div class="flex items-end">
+          <button 
+            (click)="filterUsers()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <i class="fas fa-filter mr-2"></i>Filter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-blue-900 rounded-lg border border-blue-800 overflow-hidden">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      </div>
+
+      <!-- Confirmation Bar for Delete -->
+      <div *ngIf="pendingDeleteUser" class="fixed top-0 left-0 w-full z-50 flex justify-center">
+        <div class="bg-red-700 text-white px-6 py-4 rounded-b-lg shadow-lg flex items-center space-x-4 mt-2">
+          <span>Are you sure you want to delete user <b>{{ pendingDeleteUser.name }}</b>? This action cannot be undone.</span>
+          <button (click)="confirmDeleteUser()" class="bg-white text-red-700 font-bold px-4 py-2 rounded hover:bg-red-100 ml-2">Confirm</button>
+          <button (click)="cancelDeleteUser()" class="bg-white text-gray-700 px-4 py-2 rounded hover:bg-gray-200 ml-2">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div *ngIf="!loading" class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-blue-800">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Name</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Role</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Verified</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Created</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Updated</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-blue-800">
+            <tr *ngFor="let user of getPaginatedUsers()" class="hover:bg-blue-800 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-white">{{ user.name || 'N/A' }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-blue-300">{{ user.email || 'N/A' }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [class]="getRoleColor(user.role) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                  {{ user.role || 'N/A' }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span *ngIf="user.isVerified" class="text-green-400 font-bold">Yes</span>
+                <span *ngIf="!user.isVerified" class="text-red-400 font-bold">No</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-300">
+                {{ user.createdAt ? (user.createdAt | date:'mediumDate') : 'N/A' }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-300">
+                {{ user.updatedAt ? (user.updatedAt | date:'mediumDate') : 'N/A' }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex space-x-2">
+                  <button 
+                    (click)="viewUser(user)"
+                    class="text-blue-400 hover:text-white transition-colors"
+                    title="View User"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button 
+                    (click)="editUser(user)"
+                    class="text-yellow-400 hover:text-white transition-colors"
+                    title="Edit User"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button 
+                    (click)="deleteUser(user)"
+                    class="text-red-400 hover:text-white transition-colors"
+                    title="Delete User"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="!loading && getPaginatedUsers().length === 0" class="text-center py-16">
+        <div class="text-blue-300 text-6xl mb-4">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">No users found</h3>
+        <p class="text-blue-300">Try adjusting your search criteria or filters.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="mt-6 flex items-center justify-between">
+      <div class="text-sm text-blue-300">
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredUsers.length) }} of {{ filteredUsers.length }} results
+      </div>
+      <div class="flex space-x-2">
+        <button 
+          (click)="goToPage(currentPage - 1)"
+          [disabled]="currentPage === 1"
+          [class]="currentPage === 1 ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
+          class="text-white px-3 py-2 rounded-lg transition-colors"
+        >
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <button 
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          (click)="goToPage(i + 1)"
+          [class]="currentPage === i + 1 ? 'bg-blue-600' : 'bg-blue-800 hover:bg-blue-700'"
+          class="text-white px-3 py-2 rounded-lg transition-colors"
+        >
+          {{ i + 1 }}
+        </button>
+        
+        <button 
+          (click)="goToPage(currentPage + 1)"
+          [disabled]="currentPage === totalPages"
+          [class]="currentPage === totalPages ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
+          class="text-white px-3 py-2 rounded-lg transition-colors"
+        >
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,709 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <div class="bg-blue-900 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-white">Course Content</h1>
+          <p class="text-blue-300 mt-1">Web Development Fundamentals</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="text-right">
+            <div class="text-2xl font-bold text-white">{{ getTotalProgress() }}%</div>
+            <div class="text-blue-300 text-sm">Overall Progress</div>
+          </div>
+          <div class="w-16 h-16 bg-blue-700 rounded-full flex items-center justify-center">
+            <i class="fas fa-graduation-cap text-2xl text-blue-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Overview -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-blue-900 rounded-lg border border-blue-800 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center mr-4">
+            <i class="fas fa-list text-xl text-blue-300"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{{ getTotalLessons() }}</div>
+            <div class="text-blue-300 text-sm">Total Lessons</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-900 rounded-lg border border-blue-800 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-green-700 rounded-lg flex items-center justify-center mr-4">
+            <i class="fas fa-check-circle text-xl text-green-300"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{{ getCompletedLessons() }}</div>
+            <div class="text-blue-300 text-sm">Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-900 rounded-lg border border-blue-800 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-yellow-700 rounded-lg flex items-center justify-center mr-4">
+            <i class="fas fa-play-circle text-xl text-yellow-300"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{{ getInProgressLessons() }}</div>
+            <div class="text-blue-300 text-sm">In Progress</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-900 rounded-lg border border-blue-800 p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-purple-700 rounded-lg flex items-center justify-center mr-4">
+            <i class="fas fa-clock text-xl text-purple-300"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{{ formatDuration(getCompletedDuration()) }}</div>
+            <div class="text-blue-300 text-sm">Time Completed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-blue-900 rounded-lg border border-blue-800 p-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Search Lessons</label>
+          <div class="relative">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              placeholder="Search lessons..."
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+            <i class="fas fa-search absolute right-3 top-3 text-blue-400"></i>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Type</label>
+          <select 
+            [(ngModel)]="selectedType"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="all">All Types</option>
+            <option value="VIDEO">Video</option>
+            <option value="READING">Reading</option>
+            <option value="QUIZ">Quiz</option>
+            <option value="ASSIGNMENT">Assignment</option>
+            <option value="DISCUSSION">Discussion</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Status</label>
+          <select 
+            [(ngModel)]="selectedStatus"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="all">All Status</option>
+            <option value="NOT_STARTED">Not Started</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="COMPLETED">Completed</option>
+          </select>
+        </div>
+
+        <div class="flex items-end">
+          <label class="flex items-center">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="showCompleted"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-blue-700 rounded bg-blue-800"
+            >
+            <span class="ml-2 text-blue-300 text-sm">Show Completed</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Lessons List -->
+      <div class="lg:col-span-1">
+        <div class="bg-blue-900 rounded-lg border border-blue-800 overflow-hidden">
+          <div class="p-4 border-b border-blue-800">
+            <h2 class="text-lg font-semibold text-white">Lessons</h2>
+          </div>
+          
+          <!-- Loading State -->
+          <div *ngIf="loading" class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          </div>
+
+          <!-- Lessons List -->
+          <div *ngIf="!loading" class="max-h-96 overflow-y-auto">
+            <div 
+              *ngFor="let lesson of getFilteredLessons(); let i = index" 
+              (click)="selectLesson(lesson)"
+              [class]="selectedLesson?.id === lesson.id ? 'bg-blue-800 border-l-4 border-blue-500' : 'hover:bg-blue-800'"
+              class="p-4 border-b border-blue-800 cursor-pointer transition-colors"
+            >
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <span [class]="getTypeColor(lesson.type) + ' px-2 py-1 rounded-full text-xs font-medium mr-2'">
+                      <i [class]="getTypeIcon(lesson.type)" class="mr-1"></i>
+                      {{ lesson.type }}
+                    </span>
+                    <span *ngIf="lesson.isRequired" class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                      Required
+                    </span>
+                  </div>
+                  
+                  <h3 class="text-white font-medium mb-1">{{ lesson.title }}</h3>
+                  <p class="text-blue-300 text-sm mb-2 line-clamp-2">{{ lesson.description }}</p>
+                  
+                  <div class="flex items-center justify-between text-xs text-blue-400">
+                    <span>{{ formatDuration(lesson.duration) }}</span>
+                    <span [class]="getStatusColor(lesson.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                      <i [class]="getStatusIcon(lesson.status)" class="mr-1"></i>
+                      {{ lesson.status.replace('_', ' ') }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="mt-3">
+                <div class="flex items-center justify-between text-xs text-blue-300 mb-1">
+                  <span>Progress</span>
+                  <span>{{ lesson.progress }}%</span>
+                </div>
+                <div class="w-full bg-blue-800 rounded-full h-2">
+                  <div 
+                    [class]="getProgressBarColor(lesson.progress)"
+                    [style.width]="lesson.progress + '%'"
+                    class="h-2 rounded-full transition-all duration-300"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- No Results -->
+          <div *ngIf="!loading && getFilteredLessons().length === 0" class="text-center py-16">
+            <div class="text-blue-300 text-4xl mb-4">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-white mb-2">No lessons found</h3>
+            <p class="text-blue-300 text-sm">Try adjusting your search criteria or filters.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lesson Content -->
+      <div class="lg:col-span-2">
+        <div *ngIf="selectedLesson" class="bg-blue-900 rounded-lg border border-blue-800 overflow-hidden">
+          <!-- Lesson Header -->
+          <div class="p-6 border-b border-blue-800">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center mb-3">
+                  <span [class]="getTypeColor(selectedLesson.type) + ' px-3 py-1 rounded-full text-sm font-medium mr-3'">
+                    <i [class]="getTypeIcon(selectedLesson.type)" class="mr-2"></i>
+                    {{ selectedLesson.type }}
+                  </span>
+                  <span *ngIf="selectedLesson.isRequired" class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    Required
+                  </span>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-white mb-2">{{ selectedLesson.title }}</h2>
+                <p class="text-blue-300 mb-4">{{ selectedLesson.description }}</p>
+                
+                <div class="flex items-center space-x-6 text-sm text-blue-400">
+                  <span><i class="fas fa-clock mr-1"></i>{{ formatDuration(selectedLesson.duration) }}</span>
+                  <span [class]="getStatusColor(selectedLesson.status) + ' px-2 py-1 rounded-full text-sm font-medium'">
+                    <i [class]="getStatusIcon(selectedLesson.status)" class="mr-1"></i>
+                    {{ selectedLesson.status.replace('_', ' ') }}
+                  </span>
+                  <span *ngIf="selectedLesson.completedAt">
+                    <i class="fas fa-check mr-1"></i>Completed {{ formatDate(selectedLesson.completedAt) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mt-4">
+              <div class="flex items-center justify-between text-sm text-blue-300 mb-2">
+                <span>Your Progress</span>
+                <span [class]="getProgressColor(selectedLesson.progress)">{{ selectedLesson.progress }}%</span>
+              </div>
+              <div class="w-full bg-blue-800 rounded-full h-3">
+                <div 
+                  [class]="getProgressBarColor(selectedLesson.progress)"
+                  [style.width]="selectedLesson.progress + '%'"
+                  class="h-3 rounded-full transition-all duration-300"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lesson Content -->
+          <div class="p-6">
+            <!-- Video Content -->
+            <div *ngIf="selectedLesson.type === 'VIDEO' && selectedLesson.videoUrl" class="mb-6">
+              <div class="bg-black rounded-lg aspect-video flex items-center justify-center relative">
+                <!-- YouTube API Player -->
+                <div *ngIf="isYouTubeVideo(selectedLesson.videoUrl)" id="youtube-player" style="width:100%; height:480px;"></div>
+                <!-- Vimeo Embed -->
+                <ng-container *ngIf="isVimeoVideo(selectedLesson.videoUrl)">
+                  <iframe
+                    [src]="getSafeEmbedUrl(selectedLesson.videoUrl)"
+                    width="100%"
+                    height="480"
+                    frameborder="0"
+                    allowfullscreen
+                    style="border-radius: 0.5rem; background: #000; width: 100%; max-height: 480px;"
+                  ></iframe>
+                </ng-container>
+                <!-- Direct Video File -->
+                <ng-template [ngIf]="!isYouTubeVideo(selectedLesson.videoUrl) && !isVimeoVideo(selectedLesson.videoUrl)">
+                  <div *ngIf="showPlayOverlay" class="absolute inset-0 flex items-center justify-center z-10 cursor-pointer" (click)="playVideo()">
+                    <div class="bg-black bg-opacity-60 rounded-full p-8 flex items-center justify-center">
+                      <i class="fas fa-play text-white text-6xl"></i>
+                    </div>
+                  </div>
+                <video
+                    #videoPlayer
+                  [src]="selectedLesson.videoUrl"
+                  controls
+                    (play)="onVideoPlay()"
+                    (pause)="onVideoPause()"
+                    (loadedmetadata)="onVideoLoaded()"
+                  style="width: 100%; height: 100%; max-height: 480px; background: #000; border-radius: 0.5rem;"
+                >
+                  Your browser does not support the video tag.
+                </video>
+                </ng-template>
+              </div>
+            </div>
+
+            <!-- Reading Content -->
+            <div *ngIf="selectedLesson.type === 'READING' && selectedLesson.readingContent" class="mb-6">
+              <div class="bg-blue-800 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-white mb-4">Reading Material</h3>
+                <div class="text-blue-300 leading-relaxed">
+                  {{ selectedLesson.readingContent }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div *ngIf="selectedLesson.type === 'QUIZ' && selectedLesson.quiz" class="mb-6">
+              <div class="bg-blue-800 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-white mb-4">{{ selectedLesson.quiz.title }}</h3>
+                <div class="space-y-4 mb-6">
+                  <div class="flex items-center justify-between text-sm text-blue-300">
+                    <span>{{ selectedLesson.quiz.questions.length }} questions</span>
+                    <span *ngIf="selectedLesson.quiz.timeLimit">{{ selectedLesson.quiz.timeLimit }} minutes</span>
+                  </div>
+                  <div class="flex items-center justify-between text-sm text-blue-300">
+                    <span>Passing score: {{ selectedLesson.quiz.passingScore }}%</span>
+                    <span>Attempts: {{ selectedLesson.quiz.attempts }}/{{ selectedLesson.quiz.maxAttempts }}</span>
+                  </div>
+                </div>
+
+                <!-- Quiz Questions -->
+                <div *ngIf="!quizStarted && !quizCompleted" class="text-center">
+                  <!-- No Start Quiz button, quiz is ready immediately -->
+                </div>
+
+                <!-- Quiz in Progress -->
+                <div *ngIf="quizStarted && !quizCompleted" class="space-y-6">
+                  <div *ngFor="let question of selectedLesson.quiz.questions; let i = index" class="bg-blue-700 rounded-lg p-4">
+                    <h4 class="text-white font-medium mb-3">Question {{ i + 1 }}: {{ question.text }}</h4>
+                    
+                    <!-- Multiple Choice -->
+                    <div *ngIf="question.type === 'MULTIPLE_CHOICE'" class="space-y-2">
+                      <div *ngFor="let option of question.options; let j = index" class="flex items-center">
+                        <input 
+                          type="radio" 
+                          [name]="'question-' + question.id"
+                          [value]="option"
+                          [(ngModel)]="quizAnswers[question.id]"
+                          [id]="'option-' + question.id + '-' + j"
+                          class="mr-3"
+                        >
+                        <label [for]="'option-' + question.id + '-' + j" class="text-blue-300 cursor-pointer">
+                          {{ option }}
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- True/False -->
+                    <div *ngIf="question.type === 'TRUE_FALSE'" class="space-y-2">
+                      <div class="flex items-center">
+                        <input 
+                          type="radio" 
+                          [name]="'question-' + question.id"
+                          value="true"
+                          [(ngModel)]="quizAnswers[question.id]"
+                          id="true-{{ question.id }}"
+                          class="mr-3"
+                        >
+                        <label for="true-{{ question.id }}" class="text-blue-300 cursor-pointer">True</label>
+                      </div>
+                      <div class="flex items-center">
+                        <input 
+                          type="radio" 
+                          [name]="'question-' + question.id"
+                          value="false"
+                          [(ngModel)]="quizAnswers[question.id]"
+                          id="false-{{ question.id }}"
+                          class="mr-3"
+                        >
+                        <label for="false-{{ question.id }}" class="text-blue-300 cursor-pointer">False</label>
+                      </div>
+                    </div>
+
+                    <!-- Fill in the Blank -->
+                    <div *ngIf="question.type === 'FILL_BLANK'" class="space-y-2">
+                      <input 
+                        type="text" 
+                        [(ngModel)]="quizAnswers[question.id]"
+                        placeholder="Enter your answer"
+                        class="w-full bg-blue-600 text-white px-3 py-2 rounded border border-blue-500 focus:outline-none focus:border-blue-400"
+                      >
+                    </div>
+
+                    <!-- Essay -->
+                    <div *ngIf="question.type === 'ESSAY'" class="space-y-2">
+                      <textarea 
+                        [(ngModel)]="quizAnswers[question.id]"
+                        placeholder="Enter your answer"
+                        rows="4"
+                        class="w-full bg-blue-600 text-white px-3 py-2 rounded border border-blue-500 focus:outline-none focus:border-blue-400"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div class="flex justify-between pt-4">
+                    <button 
+                      (click)="cancelQuiz()"
+                      class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      (click)="submitQuiz(selectedLesson, quizAnswers)"
+                      [disabled]="!canSubmitQuiz()"
+                      class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Submit Quiz
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Quiz Results -->
+                <div *ngIf="quizCompleted && quizResult" class="text-center">
+                  <div class="mb-4">
+                    <div class="text-2xl font-bold text-white mb-2">
+                      {{ quizResult.passed ? 'Congratulations!' : 'Try Again' }}
+                    </div>
+                    <div class="text-blue-300">
+                      Score: {{ quizResult.score }}/{{ quizResult.maxScore }} ({{ Math.round((quizResult.score / quizResult.maxScore) * 100) }}%)
+                    </div>
+                  </div>
+                  <button 
+                    *ngIf="!quizResult.passed && selectedLesson.quiz.attempts < selectedLesson.quiz.maxAttempts"
+                    (click)="retakeQuiz()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  >
+                    <i class="fas fa-redo mr-2"></i>Retake Quiz
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Assignment Content -->
+            <div *ngIf="selectedLesson.type === 'ASSIGNMENT' && selectedLesson.assignment" class="mb-6">
+              <div class="bg-blue-800 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-white mb-4">{{ selectedLesson.assignment.title }}</h3>
+                <p class="text-blue-300 mb-4">{{ selectedLesson.assignment.description }}</p>
+                <div class="space-y-2 text-sm text-blue-300">
+                  <div><i class="fas fa-calendar mr-2"></i>Due: {{ formatDate(selectedLesson.assignment.dueDate) }}</div>
+                  <div><i class="fas fa-star mr-2"></i>Points: {{ selectedLesson.assignment.points }}</div>
+                  <div><i class="fas fa-upload mr-2"></i>Submission: {{ selectedLesson.assignment.submissionType }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Discussion Content -->
+            <div *ngIf="selectedLesson.type === 'DISCUSSION' && selectedLesson.discussion" class="mb-6">
+              <div class="bg-blue-800 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-white mb-4">{{ selectedLesson.discussion.title }}</h3>
+                <p class="text-blue-300 mb-4">{{ selectedLesson.discussion.description }}</p>
+                <div class="text-sm text-blue-300">
+                  <i class="fas fa-comments mr-2"></i>{{ selectedLesson.discussion.posts.length }} posts
+                </div>
+              </div>
+            </div>
+
+            <!-- Materials -->
+            <div class="mb-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white">Materials</h3>
+                <button 
+                  *ngIf="authService.currentUser?.role === 'INSTRUCTOR' || authService.currentUser?.role === 'ADMIN'"
+                  (click)="openAddMaterialModal()"
+                  class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                >
+                  <i class="fas fa-plus mr-2"></i>Add Material
+                </button>
+              </div>
+              
+              <div *ngIf="selectedLesson.materials && selectedLesson.materials.length > 0" class="space-y-3">
+                <div 
+                  *ngFor="let material of selectedLesson.materials"
+                  class="bg-blue-800 rounded-lg p-4 flex items-center justify-between"
+                >
+                  <div class="flex items-center">
+                    <i class="fas fa-file text-blue-400 mr-3"></i>
+                    <div>
+                      <div class="text-white font-medium">{{ material.title }}</div>
+                      <div class="text-blue-300 text-sm">
+                        {{ material.type }} • {{ material.size }} • {{ material.downloadCount }} downloads
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                    (click)="downloadMaterial(material)"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition-colors"
+                  >
+                    <i class="fas fa-download mr-1"></i>Download
+                  </button>
+                </div>
+              </div>
+              
+              <!-- No Materials Message -->
+              <div *ngIf="!selectedLesson.materials || selectedLesson.materials.length === 0" class="text-center py-8">
+                <div class="text-blue-300 text-4xl mb-4">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-white mb-2">No Materials Yet</h4>
+                <p class="text-blue-300 text-sm mb-4">Add materials to help students learn better.</p>
+                <button 
+                  *ngIf="authService.currentUser?.role === 'INSTRUCTOR' || authService.currentUser?.role === 'ADMIN'"
+                  (click)="openAddMaterialModal()"
+                  class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                >
+                  <i class="fas fa-plus mr-2"></i>Add First Material
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-4">
+              <button 
+                *ngIf="selectedLesson.type !== 'VIDEO' && selectedLesson.type !== 'QUIZ' && selectedLesson.status === 'NOT_STARTED'"
+                (click)="startLesson(selectedLesson)"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                <i class="fas fa-play mr-2"></i>Start Lesson
+              </button>
+              
+              <button 
+                *ngIf="selectedLesson.type !== 'VIDEO' && selectedLesson.type !== 'QUIZ' && selectedLesson.status === 'IN_PROGRESS'"
+                (click)="continueLesson(selectedLesson)"
+                class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                <i class="fas fa-play mr-2"></i>Continue Lesson
+              </button>
+              
+              <button 
+                *ngIf="selectedLesson.type !== 'VIDEO' && selectedLesson.type !== 'QUIZ' && selectedLesson.status !== 'COMPLETED'"
+                (click)="completeLesson(selectedLesson)"
+                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                <i class="fas fa-check mr-2"></i>Mark Complete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Lesson Selected -->
+        <div *ngIf="!selectedLesson" class="bg-blue-900 rounded-lg border border-blue-800 p-12 text-center">
+          <div class="text-blue-300 text-6xl mb-4">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-2">Select a Lesson</h3>
+          <p class="text-blue-300">Choose a lesson from the list to start learning.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Material Modal -->
+  <div *ngIf="showAddMaterialModal && (authService.currentUser?.role === 'INSTRUCTOR' || authService.currentUser?.role === 'ADMIN')" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-blue-900 rounded-lg border border-blue-800 p-6 w-full max-w-md mx-4">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-white">Add Material</h2>
+        <button 
+          (click)="closeAddMaterialModal()"
+          class="text-blue-300 hover:text-white transition-colors"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="addMaterial()" class="space-y-4">
+        <!-- Upload Method Toggle -->
+        <div class="flex items-center justify-center space-x-4 mb-4">
+          <button 
+            type="button"
+            (click)="toggleUploadMethod()"
+            [class]="useFileUpload ? 'bg-blue-600 text-white' : 'bg-blue-800 text-blue-300'"
+            class="px-4 py-2 rounded-lg transition-colors"
+          >
+            <i class="fas fa-upload mr-2"></i>File Upload
+          </button>
+          <button 
+            type="button"
+            (click)="toggleUploadMethod()"
+            [class]="!useFileUpload ? 'bg-blue-600 text-white' : 'bg-blue-800 text-blue-300'"
+            class="px-4 py-2 rounded-lg transition-colors"
+          >
+            <i class="fas fa-link mr-2"></i>Link
+          </button>
+        </div>
+
+        <!-- Material Title -->
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Material Title *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="materialTitle"
+            name="materialTitle"
+            placeholder="Enter material title"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            required
+          >
+        </div>
+
+        <!-- Material Description -->
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Description</label>
+          <textarea 
+            [(ngModel)]="materialDescription"
+            name="materialDescription"
+            placeholder="Enter material description (optional)"
+            rows="3"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          ></textarea>
+        </div>
+
+        <!-- Material Type -->
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Material Type</label>
+          <select 
+            [(ngModel)]="materialType"
+            name="materialType"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="DOCUMENT">Document</option>
+            <option value="PDF">PDF</option>
+            <option value="VIDEO">Video</option>
+            <option value="AUDIO">Audio</option>
+            <option value="LINK">Link</option>
+          </select>
+        </div>
+
+        <!-- File Upload Section -->
+        <div *ngIf="useFileUpload">
+          <label class="block text-blue-300 text-sm font-medium mb-2">Select File *</label>
+          <div class="border-2 border-dashed border-blue-700 rounded-lg p-6 text-center">
+            <input 
+              type="file" 
+              (change)="onFileSelected($event)"
+              accept=".pdf,.doc,.docx,.txt,.mp4,.avi,.mov,.mp3,.wav,.zip,.rar"
+              class="hidden"
+              id="fileInput"
+            >
+            <label for="fileInput" class="cursor-pointer">
+              <div class="text-blue-300 text-4xl mb-4">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+              <p class="text-white font-medium mb-2">Click to select a file</p>
+              <p class="text-blue-300 text-sm">PDF, DOC, MP4, MP3, etc. (Max 50MB)</p>
+            </label>
+          </div>
+          <div *ngIf="selectedFile" class="mt-3 p-3 bg-blue-800 rounded-lg">
+            <div class="flex items-center">
+              <i class="fas fa-file text-blue-400 mr-3"></i>
+              <div class="flex-1">
+                <div class="text-white font-medium">{{ selectedFile.name }}</div>
+                <div class="text-blue-300 text-sm">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- URL Input Section -->
+        <div *ngIf="!useFileUpload">
+          <label class="block text-blue-300 text-sm font-medium mb-2">Material URL *</label>
+          <input 
+            type="url" 
+            [(ngModel)]="materialUrl"
+            name="materialUrl"
+            placeholder="https://example.com/material"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            required
+          >
+        </div>
+
+        <!-- Upload Progress -->
+        <div *ngIf="isUploading" class="mt-4">
+          <div class="flex items-center justify-between text-sm text-blue-300 mb-2">
+            <span>Uploading...</span>
+            <span>{{ uploadProgress }}%</span>
+          </div>
+          <div class="w-full bg-blue-800 rounded-full h-2">
+            <div 
+              class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+              [style.width]="uploadProgress + '%'"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex space-x-3 pt-4">
+          <button 
+            type="button"
+            (click)="closeAddMaterialModal()"
+            class="flex-1 bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            [disabled]="isUploading"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+            [disabled]="isUploading"
+          >
+            <span *ngIf="!isUploading">
+              <i class="fas fa-plus mr-2"></i>Add Material
+            </span>
+            <span *ngIf="isUploading">
+              <i class="fas fa-spinner fa-spin mr-2"></i>Uploading...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

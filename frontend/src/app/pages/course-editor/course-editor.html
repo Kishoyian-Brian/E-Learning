@@ -1,0 +1,581 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <header class="bg-primary border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center">
+          <button (click)="router.navigate(['/instructor-dashboard'])" class="mr-4 text-blue-300 hover:text-white">
+            <i class="fas fa-arrow-left text-xl"></i>
+          </button>
+          <h1 class="text-2xl font-bold text-white">
+            {{ course?.title || 'Course Editor' }}
+          </h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button (click)="router.navigate(['/courses', courseId])" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-eye mr-2"></i>Preview Course
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-900 border border-red-700 rounded-lg p-4 mb-6">
+      <p class="text-red-300">{{ error }}</p>
+    </div>
+
+    <!-- Course Editor Content -->
+    <div *ngIf="!loading && course" class="space-y-8">
+      <!-- Course Info -->
+      <div class="bg-blue-900 rounded-lg p-6">
+        <h2 class="text-xl font-semibold text-white mb-4">Course Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-blue-300 text-sm font-medium mb-2">Title</label>
+            <p class="text-white">{{ course.title }}</p>
+          </div>
+          <div>
+            <label class="block text-blue-300 text-sm font-medium mb-2">Category</label>
+            <p class="text-white">{{ course.category.name }}</p>
+          </div>
+          <div>
+            <label class="block text-blue-300 text-sm font-medium mb-2">Difficulty</label>
+            <p class="text-white">{{ course.difficulty.name }}</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="block text-blue-300 text-sm font-medium mb-2">Description</label>
+          <p class="text-white">{{ course.description }}</p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="border-b border-blue-700">
+        <nav class="flex space-x-8">
+          <button 
+            (click)="switchTab('modules')"
+            [class]="selectedTab === 'modules' ? 'border-blue-500 text-blue-500' : 'border-transparent text-blue-300 hover:text-white'"
+            class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+          >
+            <i class="fas fa-book mr-2"></i>Modules ({{ modules.length }})
+          </button>
+          <button 
+            (click)="switchTab('quizzes')"
+            [class]="selectedTab === 'quizzes' ? 'border-blue-500 text-blue-500' : 'border-transparent text-blue-300 hover:text-white'"
+            class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+          >
+            <i class="fas fa-question-circle mr-2"></i>Quizzes ({{ quizzes.length }})
+          </button>
+        </nav>
+      </div>
+
+      <!-- Modules Tab -->
+      <div *ngIf="selectedTab === 'modules'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-white">Course Modules</h3>
+          <button 
+            (click)="createModule()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <i class="fas fa-plus mr-2"></i>Add Module
+          </button>
+        </div>
+
+        <!-- Modules List -->
+        <div class="space-y-4">
+          <div *ngFor="let module of modules; let i = index" class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="flex items-center mb-2">
+                  <span class="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium mr-3">
+                    Module {{ module.order }}
+                  </span>
+                  <h4 class="text-lg font-semibold text-white">{{ module.title }}</h4>
+                </div>
+                <p class="text-blue-300 mb-3">{{ module.description }}</p>
+                <div class="flex items-center space-x-4 text-sm text-blue-400">
+                  <span><i class="fas fa-clock mr-1"></i>{{ formatDuration(module.duration) }}</span>
+                  <span><i class="fas fa-calendar mr-1"></i>{{ module.createdAt | date }}</span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button class="text-blue-300 hover:text-white">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button (click)="deleteModule(module.id)" class="text-red-400 hover:text-red-300">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button (click)="openMaterialModal(module)" class="text-green-400 hover:text-green-300 ml-2">
+                  <i class="fas fa-plus"></i> Add Material
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="modules.length === 0" class="bg-blue-900 rounded-lg p-8 text-center">
+            <i class="fas fa-book text-4xl text-blue-400 mb-4"></i>
+            <h4 class="text-lg font-semibold text-white mb-2">No Modules Yet</h4>
+            <p class="text-blue-300 mb-4">Start building your course by adding modules</p>
+            <button 
+              (click)="createModule()"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <i class="fas fa-plus mr-2"></i>Add First Module
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quizzes Tab -->
+      <div *ngIf="selectedTab === 'quizzes'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-white">Course Quizzes</h3>
+          <button 
+            (click)="createQuiz()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <i class="fas fa-plus mr-2"></i>Add Quiz
+          </button>
+        </div>
+
+        <!-- Quizzes List -->
+        <div class="space-y-4">
+          <div *ngFor="let quiz of quizzes" class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h4 class="text-lg font-semibold text-white mb-2">{{ quiz.title }}</h4>
+                <div class="flex items-center space-x-4 text-sm text-blue-400 mb-3">
+                  <span><i class="fas fa-question-circle mr-1"></i>{{ quiz.questions.length }} questions</span>
+                  <span *ngIf="quiz.timeLimit"><i class="fas fa-clock mr-1"></i>{{ quiz.timeLimit }} minutes</span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button class="text-blue-300 hover:text-white">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button (click)="deleteQuiz(quiz.id)" class="text-red-400 hover:text-red-300">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="quizzes.length === 0" class="bg-blue-900 rounded-lg p-8 text-center">
+            <i class="fas fa-question-circle text-4xl text-blue-400 mb-4"></i>
+            <h4 class="text-lg font-semibold text-white mb-2">No Quizzes Yet</h4>
+            <p class="text-blue-300 mb-4">Add quizzes to test your students' knowledge</p>
+            <button 
+              (click)="createQuiz()"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <i class="fas fa-plus mr-2"></i>Add First Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Module Creation Modal -->
+  <div *ngIf="showModuleModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-blue-900 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Create New Module</h2>
+        <button (click)="closeModuleModal()" class="text-blue-300 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="submitCreateModule()" class="space-y-6">
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Module Title *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newModule.title" 
+            name="title"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500"
+            placeholder="Enter module title"
+            required
+          >
+        </div>
+
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Description *</label>
+          <textarea 
+            [(ngModel)]="newModule.description" 
+            name="description"
+            rows="3"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500"
+            placeholder="Enter module description"
+            required
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-blue-300 text-sm font-medium mb-2">Order</label>
+            <input 
+              type="number" 
+              [(ngModel)]="newModule.order" 
+              name="order"
+              min="1"
+              class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+            >
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-4 pt-6 border-t border-blue-700">
+          <button 
+            type="button" 
+            (click)="closeModuleModal()"
+            class="px-4 py-2 text-blue-300 hover:text-white border border-blue-700 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="creatingModule"
+            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span *ngIf="!creatingModule">
+              <i class="fas fa-plus mr-2"></i>Create Module
+            </span>
+            <span *ngIf="creatingModule">
+              <i class="fas fa-spinner fa-spin mr-2"></i>Creating...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quiz Creation Modal -->
+  <div *ngIf="showQuizModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-blue-900 rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Create New Quiz</h2>
+        <button (click)="closeQuizModal()" class="text-blue-300 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="submitCreateQuiz()" class="space-y-6">
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Quiz Title *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newQuiz.title" 
+            name="title"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500"
+            placeholder="Enter quiz title"
+            required
+          >
+        </div>
+
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Time Limit (minutes)</label>
+          <input 
+            type="number" 
+            [(ngModel)]="newQuiz.timeLimit" 
+            name="timeLimit"
+            min="1"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+          >
+        </div>
+
+        <!-- Questions Section -->
+        <div class="border border-blue-700 rounded-lg p-4">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-white">Questions ({{ newQuiz.questions.length }})</h3>
+            <button 
+              type="button"
+              (click)="addQuestion()"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors"
+            >
+              <i class="fas fa-plus mr-1"></i>Add Question
+            </button>
+          </div>
+
+          <!-- Questions List -->
+          <div class="space-y-4">
+            <div *ngFor="let question of newQuiz.questions; let i = index" class="bg-blue-800 rounded-lg p-4">
+              <div class="flex justify-between items-start mb-3">
+                <h4 class="text-white font-medium">Question {{ i + 1 }}</h4>
+                <button 
+                  type="button"
+                  (click)="removeQuestion(i)"
+                  class="text-red-400 hover:text-red-300"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              <p class="text-blue-300 mb-2">{{ question.text }}</p>
+              <div class="flex items-center space-x-2 text-sm text-blue-400">
+                <span class="bg-blue-700 px-2 py-1 rounded">{{ getQuestionTypeLabel(question.type) }}</span>
+                <span>Answer: {{ question.answer }}</span>
+              </div>
+            </div>
+
+            <!-- Empty Questions State -->
+            <div *ngIf="newQuiz.questions.length === 0" class="text-center py-8">
+              <i class="fas fa-question-circle text-2xl text-blue-400 mb-2"></i>
+              <p class="text-blue-300">No questions added yet</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-4 pt-6 border-t border-blue-700">
+          <button 
+            type="button" 
+            (click)="closeQuizModal()"
+            class="px-4 py-2 text-blue-300 hover:text-white border border-blue-700 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="creatingQuiz || newQuiz.questions.length === 0"
+            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span *ngIf="!creatingQuiz">
+              <i class="fas fa-plus mr-2"></i>Create Quiz
+            </span>
+            <span *ngIf="creatingQuiz">
+              <i class="fas fa-spinner fa-spin mr-2"></i>Creating...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Question Creation Modal -->
+  <div *ngIf="showQuestionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-blue-900 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Add Question</h2>
+        <button (click)="closeQuestionModal()" class="text-blue-300 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <form (ngSubmit)="submitAddQuestion()" class="space-y-6">
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Question Text *</label>
+          <textarea 
+            [(ngModel)]="newQuestion.text" 
+            name="text"
+            rows="3"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500"
+            placeholder="Enter your question"
+            required
+          ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Question Type *</label>
+          <select 
+            [(ngModel)]="newQuestion.type" 
+            name="type"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+          >
+            <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+            <option value="TRUE_FALSE">True/False</option>
+            <option value="FILL_BLANK">Fill in the Blank</option>
+            <option value="ESSAY">Essay</option>
+          </select>
+        </div>
+
+        <!-- Multiple Choice Options -->
+        <div *ngIf="newQuestion.type === 'MULTIPLE_CHOICE'">
+          <label class="block text-blue-300 text-sm font-medium mb-2">Options</label>
+          <div class="space-y-2">
+            <div *ngFor="let option of newQuestion.options; let i = index" class="flex items-center space-x-2">
+              <input 
+                type="radio" 
+                [name]="'correctAnswer'" 
+                [value]="option"
+                [(ngModel)]="newQuestion.answer"
+                class="text-blue-600"
+              >
+              <input 
+                type="text" 
+                [(ngModel)]="newQuestion.options[i]" 
+                [name]="'option' + i"
+                class="flex-1 bg-blue-800 border border-blue-700 rounded px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500"
+                placeholder="Option {{ i + 1 }}"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- True/False Answer -->
+        <div *ngIf="newQuestion.type === 'TRUE_FALSE'">
+          <label class="block text-blue-300 text-sm font-medium mb-2">Correct Answer *</label>
+          <select 
+            [(ngModel)]="newQuestion.answer" 
+            name="answer"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+          >
+            <option value="">Select answer</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+
+        <!-- Fill in the Blank / Essay Answer -->
+        <div *ngIf="newQuestion.type === 'FILL_BLANK' || newQuestion.type === 'ESSAY'">
+          <label class="block text-blue-300 text-sm font-medium mb-2">Correct Answer *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newQuestion.answer" 
+            name="answer"
+            class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500"
+            placeholder="Enter the correct answer"
+            required
+          >
+        </div>
+
+        <div class="flex justify-end space-x-4 pt-6 border-t border-blue-700">
+          <button 
+            type="button" 
+            (click)="closeQuestionModal()"
+            class="px-4 py-2 text-blue-300 hover:text-white border border-blue-700 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="addingQuestion"
+            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span *ngIf="!addingQuestion">
+              <i class="fas fa-plus mr-2"></i>Add Question
+            </span>
+            <span *ngIf="addingQuestion">
+              <i class="fas fa-spinner fa-spin mr-2"></i>Adding...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Material Modal -->
+  <div *ngIf="showMaterialModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-blue-900 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Add Material</h2>
+        <button (click)="closeMaterialModal()" class="text-blue-300 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form (ngSubmit)="submitCreateMaterial()" class="space-y-6">
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Title *</label>
+          <input type="text" [(ngModel)]="newMaterial.title" name="materialTitle" class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500" placeholder="Enter material title" required>
+        </div>
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Description</label>
+          <textarea [(ngModel)]="newMaterial.description" name="materialDescription" rows="2" class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500" placeholder="Enter material description"></textarea>
+        </div>
+        
+        <!-- Material Type Selection -->
+        <div>
+          <label class="block text-blue-300 text-sm font-medium mb-2">Material Type *</label>
+          <select [(ngModel)]="materialInputType" name="materialInputType" (change)="onMaterialTypeChange()" class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500" required>
+            <option value="file">Upload File</option>
+            <option value="link">External Link</option>
+          </select>
+        </div>
+
+        <!-- File Upload Section -->
+        <div *ngIf="materialInputType === 'file'">
+          <label class="block text-blue-300 text-sm font-medium mb-2">File Type *</label>
+          <select [(ngModel)]="newMaterial.type" name="materialType" class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500" required>
+            <option value="PDF">PDF Document</option>
+            <option value="VIDEO">Video</option>
+            <option value="IMAGE">Image</option>
+            <option value="OTHER">Other Document</option>
+          </select>
+          
+          <div class="mt-4">
+            <label class="block text-blue-300 text-sm font-medium mb-2">Select File *</label>
+            <div class="border-2 border-dashed border-blue-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
+              <input 
+                type="file" 
+                #fileInput
+                (change)="onFileSelected($event)"
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.mp4,.avi,.mov,.jpg,.jpeg,.png,.gif"
+                class="hidden"
+              >
+              <div *ngIf="!selectedFile" (click)="fileInput.click()" class="cursor-pointer">
+                <i class="fas fa-cloud-upload-alt text-3xl text-blue-400 mb-2"></i>
+                <p class="text-blue-300 mb-1">Click to select a file</p>
+                <p class="text-blue-400 text-sm">PDF, Video, Image, or Document files</p>
+              </div>
+              <div *ngIf="selectedFile" class="text-left">
+                <div class="flex items-center justify-between bg-blue-800 rounded-lg p-3">
+                  <div class="flex items-center">
+                    <i class="fas fa-file text-blue-400 mr-3"></i>
+                    <div>
+                      <p class="text-white font-medium">{{ selectedFile.name }}</p>
+                      <p class="text-blue-300 text-sm">{{ formatFileSize(selectedFile.size) }}</p>
+                    </div>
+                  </div>
+                  <button type="button" (click)="removeSelectedFile()" class="text-red-400 hover:text-red-300">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- External Link Section -->
+        <div *ngIf="materialInputType === 'link'">
+          <div>
+            <label class="block text-blue-300 text-sm font-medium mb-2">Type *</label>
+            <select [(ngModel)]="newMaterial.type" name="materialType" class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500" required>
+              <option value="LINK">External Link</option>
+              <option value="VIDEO">Video Link</option>
+              <option value="PDF">PDF Link</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-blue-300 text-sm font-medium mb-2">URL *</label>
+            <input type="url" [(ngModel)]="newMaterial.url" name="materialUrl" class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white placeholder-blue-400 focus:outline-none focus:border-blue-500" placeholder="https://example.com/resource" required>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-blue-300 text-sm font-medium mb-2">Order</label>
+            <input type="number" [(ngModel)]="newMaterial.order" name="materialOrder" min="1" class="w-full bg-blue-800 border border-blue-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div class="flex items-center mt-6">
+            <input type="checkbox" [(ngModel)]="newMaterial.visible" name="materialVisible" class="mr-2">
+            <label class="text-blue-300 text-sm">Visible</label>
+          </div>
+        </div>
+        <div class="flex justify-end space-x-4 pt-6 border-t border-blue-700">
+          <button type="button" (click)="closeMaterialModal()" class="px-4 py-2 text-blue-300 hover:text-white border border-blue-700 rounded-lg transition-colors">Cancel</button>
+          <button type="submit" [disabled]="creatingMaterial || (materialInputType === 'file' && !selectedFile)" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <span *ngIf="!creatingMaterial"><i class="fas fa-plus mr-2"></i>Add Material</span>
+            <span *ngIf="creatingMaterial"><i class="fas fa-spinner fa-spin mr-2"></i>Adding...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

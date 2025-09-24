@@ -1,0 +1,189 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Navbar removed -->
+
+  <!-- Login Section -->
+  <section class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+      <!-- Header -->
+      <div class="text-center">
+        <div class="mx-auto h-16 w-16 bg-accent rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-graduation-cap text-2xl text-white"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+        <p class="text-accent">Sign in to your EduSoma account</p>
+      </div>
+
+      <!-- Login Form -->
+      <div class="bg-secondary rounded-lg border border-accent p-8">
+        <!-- Status Messages -->
+        <div *ngIf="loginSuccess" class="mb-6 p-4 rounded-lg border bg-accent border-accent">
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-white mr-3"></i>
+            <span class="text-white">Login successful! Redirecting...</span>
+          </div>
+        </div>
+
+        <div *ngIf="loginError" class="mb-6 p-4 rounded-lg border bg-accent border-accent">
+          <div class="flex items-center">
+            <i class="fas fa-exclamation-circle text-white mr-3"></i>
+            <span class="text-white">{{ loginError }}</span>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="space-y-6">
+          <!-- Email Field -->
+          <div>
+            <label for="email" class="block text-accent text-sm font-medium mb-2">
+              Email Address
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-envelope text-accent"></i>
+              </div>
+              <input 
+                type="email" 
+                id="email"
+                [(ngModel)]="loginForm.email"
+                name="email"
+                (input)="onEmailChange()"
+                [class]="emailError ? 'border-accent focus:border-accent' : 'border-accent focus:border-accent'"
+                class="w-full bg-primary text-white pl-10 pr-4 py-3 rounded-lg border focus:outline-none transition-colors"
+                placeholder="Enter your email"
+                required
+              >
+            </div>
+            <p *ngIf="emailError" class="mt-1 text-accent text-sm">{{ emailError }}</p>
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <label for="password" class="block text-accent text-sm font-medium mb-2">
+              Password
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-accent"></i>
+              </div>
+              <input 
+                [type]="getPasswordInputType()"
+                id="password"
+                [(ngModel)]="loginForm.password"
+                name="password"
+                (input)="onPasswordChange()"
+                [class]="passwordError ? 'border-accent focus:border-accent' : 'border-accent focus:border-accent'"
+                class="w-full bg-primary text-white pl-10 pr-12 py-3 rounded-lg border focus:outline-none transition-colors"
+                placeholder="Enter your password"
+                required
+              >
+              <button 
+                type="button"
+                (click)="togglePasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-accent hover:text-white transition-colors"
+              >
+                <i [class]="getPasswordIcon()"></i>
+              </button>
+            </div>
+            <p *ngIf="passwordError" class="mt-1 text-accent text-sm">{{ passwordError }}</p>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input 
+                type="checkbox" 
+                id="rememberMe"
+                [(ngModel)]="loginForm.rememberMe"
+                name="rememberMe"
+                class="h-4 w-4 text-accent focus:ring-accent border-accent rounded bg-primary"
+              >
+              <label for="rememberMe" class="ml-2 block text-sm text-accent">
+                Remember me
+              </label>
+            </div>
+            <button 
+              type="button"
+              (click)="forgotPassword()"
+              class="text-sm text-accent hover:text-white transition-colors"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit"
+            [disabled]="isSubmitting"
+            [class]="isSubmitting ? 'bg-accent opacity-50 cursor-not-allowed' : 'bg-accent hover:bg-secondary'"
+            class="w-full text-white py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-secondary"
+          >
+            <i *ngIf="isSubmitting" class="fas fa-spinner fa-spin mr-2"></i>
+            <i *ngIf="!isSubmitting" class="fas fa-sign-in-alt mr-2"></i>
+            {{ isSubmitting ? 'Signing in...' : 'Sign In' }}
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-accent"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-secondary text-accent">Or continue with</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Login Buttons -->
+        <div class="mt-6 grid grid-cols-3 gap-3">
+          <button 
+            (click)="loginWithGoogle()"
+            class="w-full inline-flex justify-center py-2 px-4 border border-accent rounded-lg shadow-sm bg-primary text-sm font-medium text-accent hover:bg-secondary hover:text-white transition-colors"
+          >
+            <i class="fab fa-google"></i>
+          </button>
+          <button 
+            (click)="loginWithFacebook()"
+            class="w-full inline-flex justify-center py-2 px-4 border border-accent rounded-lg shadow-sm bg-primary text-sm font-medium text-accent hover:bg-secondary hover:text-white transition-colors"
+          >
+            <i class="fab fa-facebook-f"></i>
+          </button>
+          <button 
+            (click)="loginWithGithub()"
+            class="w-full inline-flex justify-center py-2 px-4 border border-accent rounded-lg shadow-sm bg-primary text-sm font-medium text-accent hover:bg-secondary hover:text-white transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </button>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="mt-6 text-center">
+          <p class="text-accent">
+            Don't have an account? 
+            <a routerLink="/register" class="font-medium text-accent hover:text-white transition-colors">
+              Sign up here
+            </a>
+          </p>
+          <p class="text-accent mt-2">
+            Need to verify your email? 
+            <a routerLink="/verification" class="font-medium text-accent hover:text-white transition-colors">
+              Verify here
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Demo Credentials -->
+      <div class="bg-primary rounded-lg border border-accent p-4">
+        <h3 class="text-sm font-medium text-accent mb-2">Demo Credentials</h3>
+        <div class="text-xs text-accent space-y-1">
+          <p><strong>Email:</strong> demo&#64;example.com</p>
+          <p><strong>Password:</strong> password</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>

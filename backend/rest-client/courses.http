@@ -1,0 +1,116 @@
+@instructor_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzUwNTdmNy0wZmE3LTRmMDgtOTY0Yy1jMjI1YjY5N2UzNjQiLCJlbWFpbCI6Imluc3RydWN0b3JAZXhhbXBsZS5jb20iLCJyb2xlIjoiSU5TVFJVQ1RPUiIsImlhdCI6MTc1MTU5MzA2NCwiZXhwIjoxNzUxNTkzOTY0fQ.ikDF7yCawNuSlZKnc0QmxQlewPEJ-v3N1CzzOIYJJzU
+@student_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMmFjOWI5ZC02OTJhLTRmNDctYThmMi1lOTUzNmZkM2YxMTQiLCJlbWFpbCI6Im1heG1pbGxpYW5tdWlydXJpQGdtYWlsLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzUxNTkyOTk2LCJleHAiOjE3NTE1OTM4OTZ9.aVtu6sxQTz-Wa6mkcveCeWpYnBBBKMNeYVDR8b71i8o
+
+### Course Management REST Client
+
+@baseUrl = http://localhost:3000/api/v1
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzUwNTdmNy0wZmE3LTRmMDgtOTY0Yy1jMjI1YjY5N2UzNjQiLCJlbWFpbCI6Imluc3RydWN0b3JAZXhhbXBsZS5jb20iLCJyb2xlIjoiSU5TVFJVQ1RPUiIsImlhdCI6MTc1MTYxMjI5MywiZXhwIjoxNzUxNjEzMTkzfQ.LDTMhOhglD7a27VhEsuPBBt4lbX-0xKaQbYdNixDPwU
+@categoryId = 00000000-0000-0000-0000-000000000001
+@difficultyId = 00000000-0000-0000-0000-000000000001
+@courseId = 00000000-0000-0000-0000-000000000001
+
+### Create Course
+POST {{baseUrl}}/courses
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Sample Course",
+  "description": "A sample course for testing.",
+  "categoryId": "{{categoryId}}",
+  "difficultyId": "{{difficultyId}}"
+}
+
+### List All Courses
+GET {{baseUrl}}/courses
+Authorization: Bearer {{accessToken}}
+
+### Search Courses
+GET {{baseUrl}}/courses/search?q=programming
+Authorization: Bearer {{accessToken}}
+
+### Filter by Category
+GET {{baseUrl}}/courses/category/{{categoryId}}
+Authorization: Bearer {{accessToken}}
+
+### Filter by Difficulty
+GET {{baseUrl}}/courses/difficulty/{{difficultyId}}
+Authorization: Bearer {{accessToken}}
+
+### Get Single Course
+GET {{baseUrl}}/courses/{{courseId}}
+Authorization: Bearer {{accessToken}}
+
+### Update Course
+PATCH {{baseUrl}}/courses/{{courseId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Updated Course Title",
+  "description": "Updated description.",
+  "categoryId": "{{categoryId}}",
+  "difficultyId": "{{difficultyId}}"
+}
+
+### Delete Course
+DELETE {{baseUrl}}/courses/{{courseId}}
+Authorization: Bearer {{accessToken}}
+
+### Get all courses
+GET http://localhost:3000/api/v1/courses
+Authorization: Bearer {{instructor_token}}
+
+### Get course by ID (replace COURSE_ID)
+GET http://localhost:3000/api/v1/courses/59af51b1-3309-4bb2-869c-3aa831914863
+Authorization: Bearer {{instructor_token}}
+
+### Update course (replace COURSE_ID)
+PATCH http://localhost:3000/api/v1/courses/59af51b1-3309-4bb2-869c-3aa831914863
+Authorization: Bearer {{instructor_token}}
+Content-Type: application/json
+
+{
+  "title": "Introduction to Python - Updated",
+  "description": "Updated description."
+}
+
+### Delete course (replace COURSE_ID)
+DELETE http://localhost:3000/api/v1/courses/59af51b1-3309-4bb2-869c-3aa831914863
+Authorization: Bearer {{instructor_token}}
+
+### Search courses
+GET http://localhost:3000/api/v1/courses/search?q=python
+Authorization: Bearer {{instructor_token}}
+
+### Filter by category
+GET http://localhost:3000/api/v1/courses/category/Programming
+Authorization: Bearer {{instructor_token}}
+
+### Filter by difficulty
+GET http://localhost:3000/api/v1/courses/difficulty/BEGINNER
+Authorization: Bearer {{instructor_token}}
+
+### Get instructor's courses
+GET http://localhost:3000/api/v1/courses/instructor/335057f7-0fa7-4f08-964c-c225b697e364
+Authorization: Bearer {{instructor_token}}
+
+### Get enrolled courses (as student)
+GET http://localhost:3000/api/v1/courses/enrolled
+Authorization: Bearer {{student_token}}
+
+### Get my courses (as instructor/admin)
+GET http://localhost:3000/api/v1/courses/my-courses
+Authorization: Bearer {{instructor_token}}
+
+### Public Course Listing (No Auth Required)
+GET http://localhost:3000/api/v1/courses/public
+
+### Public Course Listing with Filters (No Auth Required)
+GET http://localhost:3000/api/v1/courses/public?category=00000000-0000-0000-0000-000000000001&difficulty=00000000-0000-0000-0000-000000000001
+
+### Enhanced Course Details (No Auth Required)
+GET http://localhost:3000/api/v1/courses/59af51b1-3309-4bb2-869c-3aa831914863/details
+
+### Enhanced Module Details (No Auth Required)
+GET http://localhost:3000/api/v1/modules/da5f835b-43ab-41cb-a279-aab209fd6e3c/details 

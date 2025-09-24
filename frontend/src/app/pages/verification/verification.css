@@ -1,0 +1,94 @@
+/* Verification Page Styles */
+
+/* Custom input focus styles */
+input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Verification code input styling */
+input[name="verificationCode"] {
+  letter-spacing: 0.5em;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Button hover effects */
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Success/Error message animations */
+.bg-green-900, .bg-red-900 {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Countdown button styling */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .max-w-md {
+    max-width: 100%;
+  }
+  
+  .p-8 {
+    padding: 1.5rem;
+  }
+  
+  input[name="verificationCode"] {
+    font-size: 1.125rem;
+    letter-spacing: 0.25em;
+  }
+}
+
+/* Accessibility improvements */
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+input:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bg-blue-600 {
+    background-color: #1d4ed8;
+  }
+  
+  .text-blue-400 {
+    color: #60a5fa;
+  }
+  
+  .border-blue-700 {
+    border-color: #1d4ed8;
+  }
+} 

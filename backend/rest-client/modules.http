@@ -1,0 +1,38 @@
+### Module Management REST Client
+
+@baseUrl = http://localhost:3000/api/v1
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzUwNTdmNy0wZmE3LTRmMDgtOTY0Yy1jMjI1YjY5N2UzNjQiLCJlbWFpbCI6Imluc3RydWN0b3JAZXhhbXBsZS5jb20iLCJyb2xlIjoiSU5TVFJVQ1RPUiIsImlhdCI6MTc1MTYxMjI5MywiZXhwIjoxNzUxNjEzMTkzfQ.LDTMhOhglD7a27VhEsuPBBt4lbX-0xKaQbYdNixDPwU
+@courseId = 00000000-0000-0000-0000-000000000001
+@moduleId = 00000000-0000-0000-0000-000000000001
+
+### Create Module
+POST {{baseUrl}}/courses/{{courseId}}/modules
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Module 1: Getting Started",
+  "description": "Introduction to the course."
+}
+
+### List Modules for Course
+GET {{baseUrl}}/courses/{{courseId}}/modules
+Authorization: Bearer {{accessToken}}
+
+### Get Single Module
+GET {{baseUrl}}/modules/{{moduleId}}
+Authorization: Bearer {{accessToken}}
+
+### Update Module
+PATCH {{baseUrl}}/modules/{{moduleId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Module 1: Course Overview",
+  "description": "Updated description."
+}
+
+### Delete Module
+DELETE {{baseUrl}}/modules/{{moduleId}}
+Authorization: Bearer {{accessToken}} 

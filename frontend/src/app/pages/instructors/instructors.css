@@ -1,0 +1,68 @@
+/* Instructors Page Styles */
+
+.instructors-container {
+  min-height: 100vh;
+  background-color: #1e3a8a;
+  color: white;
+}
+
+.instructor-card {
+  background-color: #1e40af;
+  border: 1px solid #1e40af;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.instructor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.instructor-avatar {
+  width: 5rem;
+  height: 5rem;
+  background-color: #1e40af;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  transition: all 0.3s ease;
+}
+
+.instructor-avatar:hover {
+  transform: scale(1.05);
+}
+
+.instructor-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #93c5fd;
+}
+
+.instructor-stats span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .instructor-card {
+    padding: 1rem;
+  }
+  
+  .instructor-avatar {
+    width: 4rem;
+    height: 4rem;
+  }
+  
+  .instructor-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+} 

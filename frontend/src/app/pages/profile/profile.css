@@ -1,0 +1,48 @@
+/* Profile Page Styles */
+
+.profile-container {
+  min-height: 100vh;
+  background-color: #1e3a8a;
+  color: white;
+}
+
+.profile-card {
+  background-color: #1e40af;
+  border: 1px solid #1e40af;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.profile-avatar {
+  width: 6rem;
+  height: 6rem;
+  background-color: #1e40af;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-card {
+    padding: 1.5rem;
+  }
+  
+  .profile-avatar {
+    width: 5rem;
+    height: 5rem;
+  }
+} 

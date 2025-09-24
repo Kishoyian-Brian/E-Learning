@@ -1,0 +1,61 @@
+@instructor_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzUwNTdmNy0wZmE3LTRmMDgtOTY0Yy1jMjI1YjY5N2UzNjQiLCJlbWFpbCI6Imluc3RydWN0b3JAZXhhbXBsZS5jb20iLCJyb2xlIjoiSU5TVFJVQ1RPUiIsImlhdCI6MTc1MTYxMjI5MywiZXhwIjoxNzUxNjEzMTkzfQ.LDTMhOhglD7a27VhEsuPBBt4lbX-0xKaQbYdNixDPwU
+@contentId = f23f46d2-206c-44b5-b7be-edf034785a39
+
+
+@baseUrl = http://localhost:3000/api/v1
+
+
+### Create Content
+POST {{baseUrl}}/content
+Content-Type: application/json
+Authorization: Bearer {{instructor_token}}
+
+{
+  "title": "Sample Video Lesson",
+  "description": "A sample video lesson.",
+  "type": "VIDEO",
+  "url": "https://videos.pexels.com/video-files/8275951/8275951-hd_1920_1080_30fps.mp4",
+  "moduleId": "da5f835b-43ab-41cb-a279-aab209fd6e3c
+",
+  "order": 1,
+  "visible": true
+}
+
+
+### Create Content
+POST {{baseUrl}}/content
+Content-Type: application/json
+Authorization: Bearer {{instructor_token}}
+
+{
+  "title": "Sample PDF Lesson",
+  "description": "A sample PDF lesson.",
+  "type": "PDF",
+  "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+  "moduleId": "da5f835b-43ab-41cb-a279-aab209fd6e3c
+",
+  "order": 1,
+  "visible": true
+}
+
+### Get All Content
+GET {{baseUrl}}/content
+Authorization: Bearer {{instructor_token}}
+
+### Get Content by ID
+GET {{baseUrl}}/content/{{contentId}}
+Authorization: Bearer {{instructor_token}}
+
+### Update Content
+PATCH {{baseUrl}}/content/{{contentId}}
+Content-Type: application/json
+Authorization: Bearer {{instructor_token}}
+
+{
+  "title": "Updated Title",
+  "description": "Updated description."
+}
+
+### Delete Content
+  DELETE {{baseUrl}}/content/{{contentId}}
+Authorization: Bearer {{instructor_token}} 

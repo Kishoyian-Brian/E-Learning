@@ -1,0 +1,175 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- All Courses Content -->
+    <div *ngIf="!loading">
+      <!-- Stats Cards - Only for Instructors/Admins -->
+      <div *ngIf="isInstructorOrAdmin()" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-secondary rounded-lg p-6 border border-accent">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-accent">
+              <i class="fas fa-book text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-accent text-sm font-medium">Total Courses</p>
+              <p class="text-2xl font-bold text-white">{{ stats?.totalCourses || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-secondary rounded-lg p-6 border border-accent">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-accent">
+              <i class="fas fa-check-circle text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-accent text-sm font-medium">Published</p>
+              <p class="text-2xl font-bold text-white">{{ stats?.publishedCourses || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-secondary rounded-lg p-6 border border-accent">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-accent">
+              <i class="fas fa-clock text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-accent text-sm font-medium">Pending Approval</p>
+              <p class="text-2xl font-bold text-white">{{ stats?.pendingApproval || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-secondary rounded-lg p-6 border border-accent">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-accent">
+              <i class="fas fa-star text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-accent text-sm font-medium">Featured</p>
+              <p class="text-2xl font-bold text-white">{{ stats?.featuredCourses || 0 }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="bg-secondary rounded-lg p-6 border border-accent mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              placeholder="Search courses by title, description, or instructor..."
+              class="w-full bg-primary text-white px-4 py-2 rounded-lg border border-accent focus:outline-none focus:border-accent"
+            >
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedCategory"
+              class="w-full bg-primary text-white px-4 py-2 rounded-lg border border-accent focus:outline-none focus:border-accent"
+            >
+              <option value="all">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</option>
+            </select>
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedLevel"
+              class="w-full bg-primary text-white px-4 py-2 rounded-lg border border-accent focus:outline-none focus:border-accent"
+            >
+              <option value="all">All Levels</option>
+              <option value="BEGINNER">Beginner</option>
+              <option value="INTERMEDIATE">Intermediate</option>
+              <option value="ADVANCED">Advanced</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Courses Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let course of getFilteredCourses()" class="bg-secondary rounded-lg border border-accent overflow-hidden hover:shadow-lg transition-all duration-300">
+          <!-- Course Image -->
+          <div class="relative h-48 bg-gradient-to-br from-accent to-secondary">
+            <div class="w-full h-full flex items-center justify-center">
+              <i class="fas fa-graduation-cap text-6xl text-white opacity-50"></i>
+            </div>
+            <div class="absolute top-4 left-4">
+              <span class="bg-accent text-white px-2 py-1 rounded-full text-xs font-medium">
+                {{ course.category.name }}
+              </span>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-accent text-white px-2 py-1 rounded-full text-xs font-medium">
+                {{ course.difficulty.name }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Course Content -->
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-lg font-semibold text-white line-clamp-2">{{ course.title }}</h3>
+            </div>
+            
+            <p class="text-accent text-sm mb-4 line-clamp-3">{{ course.description }}</p>
+            
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center text-accent text-sm">
+                <i class="fas fa-user mr-1"></i>
+                <span>{{ course.instructor.name }}</span>
+              </div>
+              <div class="flex items-center text-accent text-sm">
+                <i class="fas fa-calendar mr-1"></i>
+                <span>{{ formatDate(course.createdAt) }}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center text-accent text-sm">
+                <i class="fas fa-users mr-1"></i>
+                <span>{{ course._count?.enrollments || 0 }} enrolled</span>
+              </div>
+              <div class="flex items-center text-accent text-sm">
+                <i class="fas fa-book mr-1"></i>
+                <span>{{ course._count?.modules || 0 }} modules</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-2">
+              <button (click)="viewCourse(course)" class="flex-1 bg-accent hover:bg-secondary text-white px-3 py-2 rounded text-sm transition-colors">
+                <i class="fas fa-eye mr-1"></i>View Details
+              </button>
+              <button (click)="enrollInCourse(course)" 
+                      class="flex-1 bg-accent hover:bg-secondary text-white px-3 py-2 rounded text-sm transition-colors"
+                      [disabled]="enrollingCourseId === course.id">
+                <ng-container *ngIf="enrollingCourseId === course.id; else enrollText">
+                  <i class="fas fa-spinner fa-spin mr-1"></i>Enrolling...
+                </ng-container>
+                <ng-template #enrollText>
+                <i class="fas fa-graduation-cap mr-1"></i>Enroll Now
+                </ng-template>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Detail Modal -->
+    <app-course-detail-modal
+      *ngIf="isViewingCourse && selectedCourse"
+      [course]="selectedCourse"
+      (close)="resetForms()"
+    ></app-course-detail-modal>
+  </main>
+</div>

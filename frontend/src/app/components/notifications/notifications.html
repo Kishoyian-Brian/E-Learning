@@ -1,0 +1,200 @@
+<div class="min-h-screen bg-gray-100">
+  <!-- Header -->
+  <div class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <h1 class="text-2xl font-bold text-gray-900">Notifications</h1>
+        <span *ngIf="getUnreadCount() > 0" class="ml-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+          {{ getUnreadCount() }}
+        </span>
+        <span *ngIf="getImportantCount() > 0" class="ml-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
+          {{ getImportantCount() }}
+        </span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button (click)="markAllAsRead()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+          <i class="fas fa-check-double mr-1"></i>Mark all as read
+        </button>
+        <button (click)="clearAllNotifications()" class="text-red-600 hover:text-red-800 text-sm font-medium">
+          <i class="fas fa-trash mr-1"></i>Clear all
+        </button>
+        <button class="text-gray-600 hover:text-gray-800">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Filters and Search -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <!-- Search -->
+        <div class="flex-1">
+          <div class="relative">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+              placeholder="Search notifications..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+
+        <!-- Filter Dropdown -->
+        <div class="lg:w-48">
+          <select 
+            [(ngModel)]="selectedFilter"
+            (change)="onFilterChange()"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="all">All Notifications</option>
+            <option value="unread">Unread</option>
+            <option value="important">Important</option>
+            <option value="course">Course</option>
+            <option value="assignment">Assignment</option>
+            <option value="announcement">Announcement</option>
+          </select>
+        </div>
+
+        <!-- Toggle Read/Unread -->
+        <div class="flex items-center">
+          <label class="flex items-center cursor-pointer">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="showReadNotifications"
+              (change)="toggleReadNotifications()"
+              class="sr-only"
+            >
+            <div class="relative">
+              <div [class]="showReadNotifications ? 'bg-blue-600' : 'bg-gray-300'" 
+                   class="w-10 h-6 rounded-full transition-colors"></div>
+              <div [class]="showReadNotifications ? 'translate-x-4' : 'translate-x-0'" 
+                   class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></div>
+            </div>
+            <span class="ml-2 text-sm text-gray-700">Show read</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="space-y-4">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center h-32">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+
+      <!-- No Notifications -->
+      <div *ngIf="!loading && filteredNotifications.length === 0" class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+        <div class="text-gray-500">
+          <i class="fas fa-bell text-6xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">No notifications</h3>
+          <p>You're all caught up! Check back later for new updates.</p>
+        </div>
+      </div>
+
+      <!-- Notification Items -->
+      <div *ngFor="let notification of filteredNotifications" 
+           [class]="notification.isRead ? 'bg-white' : 'bg-blue-50'"
+           class="rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
+        
+        <div class="p-6">
+          <div class="flex items-start justify-between">
+            <!-- Notification Content -->
+            <div class="flex-1">
+              <div class="flex items-start space-x-3">
+                <!-- Icon -->
+                <div [class]="getNotificationColor(notification.type)" 
+                     class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                  <i [class]="getNotificationIcon(notification.type)" class="text-lg"></i>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between mb-1">
+                    <h3 [class]="notification.isRead ? 'text-gray-900' : 'text-gray-900 font-semibold'" 
+                        class="text-lg">
+                      {{ notification.title }}
+                    </h3>
+                    <div class="flex items-center space-x-2">
+                      <!-- Important Badge -->
+                      <span *ngIf="notification.isImportant" 
+                            class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                        Important
+                      </span>
+                      <!-- Time -->
+                      <span class="text-sm text-gray-500">{{ formatTime(notification.timestamp) }}</span>
+                    </div>
+                  </div>
+
+                  <p class="text-gray-600 mb-3">{{ notification.message }}</p>
+
+                  <!-- Additional Info -->
+                  <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <!-- Course Name -->
+                    <span *ngIf="notification.courseName" class="flex items-center">
+                      <i class="fas fa-graduation-cap mr-1"></i>
+                      {{ notification.courseName }}
+                    </span>
+                    
+                    <!-- Sender -->
+                    <span *ngIf="notification.senderName" class="flex items-center">
+                      <i class="fas fa-user mr-1"></i>
+                      {{ notification.senderName }}
+                    </span>
+                    
+                    <!-- Due Date -->
+                    <span *ngIf="notification.dueDate" class="flex items-center">
+                      <i class="fas fa-clock mr-1"></i>
+                      Due: {{ notification.dueDate.toLocaleDateString() }}
+                    </span>
+                  </div>
+
+                  <!-- Action Button -->
+                  <div *ngIf="notification.actionUrl" class="mt-3">
+                    <button (click)="navigateToAction(notification)" 
+                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      <i class="fas fa-external-link-alt mr-1"></i>View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-2 ml-4">
+              <!-- Mark as Read/Unread -->
+              <button 
+                (click)="markAsRead(notification.id)"
+                *ngIf="!notification.isRead"
+                class="text-gray-400 hover:text-gray-600 p-2"
+                title="Mark as read"
+              >
+                <i class="fas fa-check"></i>
+              </button>
+              
+              <!-- Delete -->
+              <button 
+                (click)="deleteNotification(notification.id)"
+                class="text-gray-400 hover:text-red-600 p-2"
+                title="Delete notification"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load More Button -->
+    <div *ngIf="filteredNotifications.length > 0" class="mt-8 text-center">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+        <i class="fas fa-sync-alt mr-2"></i>Load More
+      </button>
+    </div>
+  </div>
+</div>

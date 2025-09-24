@@ -1,0 +1,704 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <header class="bg-primary border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-white">Enrollment Management</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-plus mr-2"></i>Manual Enrollment
+          </button>
+          <button (click)="exportEnrollmentData()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-download mr-2"></i>Export Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="bg-blue-900 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <button 
+          (click)="switchTab('enrollments')"
+          [class]="selectedTab === 'enrollments' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-users mr-2"></i>Enrollments
+        </button>
+        <button 
+          (click)="switchTab('applications')"
+          [class]="selectedTab === 'applications' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-file-alt mr-2"></i>Applications
+        </button>
+        <button 
+          (click)="switchTab('analytics')"
+          [class]="selectedTab === 'analytics' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-chart-bar mr-2"></i>Analytics
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Enrollments Tab -->
+    <div *ngIf="!loading && selectedTab === 'enrollments'">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-600">
+              <i class="fas fa-users text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Total Enrollments</p>
+              <p class="text-2xl font-bold text-white">{{ stats?.totalEnrollments || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-600">
+              <i class="fas fa-play-circle text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Active</p>
+              <p class="text-2xl font-bold text-white">{{ getActiveEnrollments().length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-600">
+              <i class="fas fa-check-circle text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Completed</p>
+              <p class="text-2xl font-bold text-white">{{ getCompletedEnrollments().length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-600">
+              <i class="fas fa-dollar-sign text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Total Revenue</p>
+              <p class="text-2xl font-bold text-white">{{ formatCurrency(getTotalRevenue(), 'USD') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="bg-blue-900 rounded-lg p-6 border border-blue-800 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              placeholder="Search by student name, course, or email..."
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedStatus"
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value="ACTIVE">Active</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="DROPPED">Dropped</option>
+              <option value="WAITLISTED">Waitlisted</option>
+            </select>
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedCourse"
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Courses</option>
+              <option value="course1">Web Development</option>
+              <option value="course2">React Development</option>
+              <option value="course3">Data Science</option>
+            </select>
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedPaymentStatus"
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Payments</option>
+              <option value="PAID">Paid</option>
+              <option value="PENDING">Pending</option>
+              <option value="FAILED">Failed</option>
+              <option value="REFUNDED">Refunded</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enrollments Table -->
+      <div class="bg-blue-900 rounded-lg border border-blue-800">
+        <div class="px-6 py-4 border-b border-blue-800">
+          <h2 class="text-xl font-semibold text-white">All Enrollments</h2>
+        </div>
+        <div class="p-6">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-blue-700">
+                  <th class="py-3 px-4 text-blue-300 font-medium">Student</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Course</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Enrollment Date</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Progress</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Status</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Payment</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Last Activity</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let enrollment of getFilteredEnrollments()" class="border-b border-blue-800 hover:bg-blue-800">
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white font-medium">{{ enrollment.studentName }}</p>
+                      <p class="text-blue-400 text-sm">{{ enrollment.studentEmail }}</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white font-medium">{{ enrollment.courseTitle }}</p>
+                      <p class="text-blue-400 text-sm">{{ enrollment.instructorName }}</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white">{{ formatDate(enrollment.enrollmentDate) }}</p>
+                      <p class="text-blue-400 text-sm">{{ getDaysSinceEnrollment(enrollment.enrollmentDate) }} days ago</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div class="w-32">
+                      <div class="flex justify-between text-sm mb-1">
+                        <span [class]="getEnrollmentProgressColor(enrollment.progress)">{{ enrollment.progress }}%</span>
+                        <span class="text-blue-400">{{ enrollment.completedModules }}/{{ enrollment.totalModules }}</span>
+                      </div>
+                      <div class="w-full bg-blue-700 rounded-full h-2">
+                        <div [class]="getProgressBarColor(enrollment.progress) + ' h-2 rounded-full'" [style.width.%]="enrollment.progress"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4">
+                    <span [class]="getStatusColor(enrollment.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                      <i [class]="getStatusIcon(enrollment.status)" class="mr-1"></i>
+                      {{ enrollment.status }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div>
+                      <span [class]="getPaymentStatusColor(enrollment.paymentStatus) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                        {{ enrollment.paymentStatus }}
+                      </span>
+                      <p class="text-white text-sm mt-1">{{ formatCurrency(enrollment.amount, enrollment.currency) }}</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white text-sm">{{ formatDate(enrollment.lastActivityDate) }}</p>
+                      <p [class]="getActivityColor(enrollment.lastActivityDate)" class="text-xs">
+                        {{ getActivityStatus(enrollment.lastActivityDate) }}
+                      </p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div class="flex space-x-2">
+                      <button (click)="viewEnrollment(enrollment)" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-eye mr-1"></i>View
+                      </button>
+                      <button *ngIf="enrollment.status === 'ACTIVE'" (click)="completeEnrollment(enrollment)" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-check mr-1"></i>Complete
+                      </button>
+                      <button *ngIf="enrollment.status === 'ACTIVE'" (click)="dropEnrollment(enrollment)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-times mr-1"></i>Drop
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Applications Tab -->
+    <div *ngIf="!loading && selectedTab === 'applications'">
+      <!-- Application Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-600">
+              <i class="fas fa-clock text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Pending</p>
+              <p class="text-2xl font-bold text-white">{{ getPendingApplications().length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-600">
+              <i class="fas fa-check-circle text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Approved</p>
+              <p class="text-2xl font-bold text-white">{{ getApprovedApplications().length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-red-600">
+              <i class="fas fa-ban text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Rejected</p>
+              <p class="text-2xl font-bold text-white">{{ getRejectedApplications().length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-600">
+              <i class="fas fa-hourglass-half text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Waitlisted</p>
+              <p class="text-2xl font-bold text-white">{{ getWaitlistedApplications().length }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bulk Actions -->
+      <div class="bg-blue-900 rounded-lg p-6 border border-blue-800 mb-6">
+        <div class="flex flex-col md:flex-row gap-4 items-center">
+          <div class="flex-1">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              placeholder="Search applications..."
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedStatus"
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value="PENDING">Pending</option>
+              <option value="APPROVED">Approved</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="WAITLISTED">Waitlisted</option>
+            </select>
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedCourse"
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Courses</option>
+              <option value="course1">Web Development</option>
+              <option value="course2">React Development</option>
+              <option value="course3">Data Science</option>
+            </select>
+          </div>
+          <div class="flex space-x-2">
+            <button (click)="bulkApproveApplications()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+              <i class="fas fa-check mr-2"></i>Bulk Approve
+            </button>
+            <button (click)="bulkRejectApplications()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+              <i class="fas fa-ban mr-2"></i>Bulk Reject
+            </button>
+          </div>
+        </div>
+        <div *ngIf="getPendingApplications().length > 0" class="mt-4">
+          <input 
+            type="text" 
+            [(ngModel)]="rejectionReason"
+            placeholder="Rejection reason (for bulk reject)..."
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+        </div>
+      </div>
+
+      <!-- Applications Table -->
+      <div class="bg-blue-900 rounded-lg border border-blue-800">
+        <div class="px-6 py-4 border-b border-blue-800">
+          <h2 class="text-xl font-semibold text-white">Enrollment Applications</h2>
+        </div>
+        <div class="p-6">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-blue-700">
+                  <th class="py-3 px-4 text-blue-300 font-medium">Student</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Course</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Application Date</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Status</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Documents</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let application of getFilteredApplications()" class="border-b border-blue-800 hover:bg-blue-800">
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white font-medium">{{ application.studentName }}</p>
+                      <p class="text-blue-400 text-sm">{{ application.studentEmail }}</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4 text-white">{{ application.courseTitle }}</td>
+                  <td class="py-4 px-4 text-white">{{ formatDate(application.applicationDate) }}</td>
+                  <td class="py-4 px-4">
+                    <span [class]="getStatusColor(application.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                      <i [class]="getStatusIcon(application.status)" class="mr-1"></i>
+                      {{ application.status }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div *ngIf="application.documents && application.documents.length > 0">
+                      <span class="text-blue-300 text-sm">{{ application.documents.length }} document(s)</span>
+                      <div class="flex space-x-1 mt-1">
+                        <a *ngFor="let doc of application.documents" href="{{ doc }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs transition-colors">
+                          <i class="fas fa-file-pdf mr-1"></i>View
+                        </a>
+                      </div>
+                    </div>
+                    <span *ngIf="!application.documents || application.documents.length === 0" class="text-gray-400 text-sm">No documents</span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div class="flex space-x-2">
+                      <button (click)="viewApplication(application)" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-eye mr-1"></i>View
+                      </button>
+                      <button *ngIf="application.status === 'PENDING'" (click)="approveApplication(application)" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-check mr-1"></i>Approve
+                      </button>
+                      <button *ngIf="application.status === 'PENDING'" (click)="waitlistApplication(application)" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-hourglass-half mr-1"></i>Waitlist
+                      </button>
+                      <button *ngIf="application.status === 'PENDING'" (click)="rejectApplication(application)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-ban mr-1"></i>Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Tab -->
+    <div *ngIf="!loading && selectedTab === 'analytics'">
+      <!-- Analytics Overview -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-600">
+              <i class="fas fa-chart-line text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Completion Rate</p>
+              <p class="text-2xl font-bold text-white">{{ getCompletionRate() }}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-600">
+              <i class="fas fa-tachometer-alt text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Avg Progress</p>
+              <p class="text-2xl font-bold text-white">{{ getAverageProgress() }}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-600">
+              <i class="fas fa-calendar text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Monthly Enrollments</p>
+              <p class="text-2xl font-bold text-white">{{ stats?.monthlyEnrollments || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-600">
+              <i class="fas fa-dollar-sign text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Monthly Revenue</p>
+              <p class="text-2xl font-bold text-white">{{ formatCurrency(stats?.revenueThisMonth || 0, 'USD') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Courses -->
+      <div class="bg-blue-900 rounded-lg border border-blue-800 mb-6">
+        <div class="px-6 py-4 border-b border-blue-800">
+          <h2 class="text-xl font-semibold text-white">Top Courses by Enrollment</h2>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div *ngFor="let course of getTopCourses()" class="bg-blue-800 rounded-lg p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-white font-medium">{{ course.courseTitle }}</h3>
+                <span class="text-blue-300 text-sm">{{ course.enrollments }} students</span>
+              </div>
+                             <div class="w-full bg-blue-700 rounded-full h-2 mb-2">
+                 <div class="bg-blue-500 h-2 rounded-full" [style.width.%]="getCourseProgressPercentage(course.enrollments)"></div>
+               </div>
+              <div class="flex justify-between text-xs text-blue-400">
+                <span>Revenue: {{ formatCurrency(getCourseById(course.courseId)?.revenue || 0, 'USD') }}</span>
+                <span>Avg Grade: {{ getCourseById(course.courseId)?.averageGrade || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Analytics -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div *ngFor="let course of courseEnrollmentData" class="bg-blue-900 rounded-lg border border-blue-800">
+          <div class="px-6 py-4 border-b border-blue-800">
+            <h3 class="text-lg font-semibold text-white">{{ course.courseTitle }}</h3>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-blue-300 text-sm">Total Enrollments</p>
+                <p class="text-white font-bold">{{ course.totalEnrollments }}</p>
+              </div>
+              <div>
+                <p class="text-blue-300 text-sm">Active Students</p>
+                <p class="text-white font-bold">{{ course.activeEnrollments }}</p>
+              </div>
+              <div>
+                <p class="text-blue-300 text-sm">Average Progress</p>
+                <p class="text-white font-bold">{{ course.averageProgress }}%</p>
+              </div>
+              <div>
+                <p class="text-blue-300 text-sm">Revenue</p>
+                <p class="text-white font-bold">{{ formatCurrency(course.revenue, 'USD') }}</p>
+              </div>
+            </div>
+            <div class="w-full bg-blue-700 rounded-full h-2">
+              <div class="bg-blue-500 h-2 rounded-full" [style.width.%]="course.averageProgress"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enrollment Detail Modal -->
+    <div *ngIf="isViewingEnrollment && selectedEnrollment" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-blue-900 rounded-lg p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white">Enrollment Details</h2>
+          <button (click)="resetForms()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-times mr-2"></i>Close
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-2">Student Information</h3>
+              <div class="bg-blue-800 rounded-lg p-4">
+                <p class="text-white"><strong>Name:</strong> {{ selectedEnrollment.studentName }}</p>
+                <p class="text-white"><strong>Email:</strong> {{ selectedEnrollment.studentEmail }}</p>
+                <p class="text-white"><strong>Enrollment Date:</strong> {{ formatDate(selectedEnrollment.enrollmentDate) }}</p>
+                <p class="text-white"><strong>Last Activity:</strong> {{ formatDate(selectedEnrollment.lastActivityDate) }}</p>
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-2">Course Information</h3>
+              <div class="bg-blue-800 rounded-lg p-4">
+                <p class="text-white"><strong>Course:</strong> {{ selectedEnrollment.courseTitle }}</p>
+                <p class="text-white"><strong>Instructor:</strong> {{ selectedEnrollment.instructorName }}</p>
+                <p class="text-white"><strong>Amount:</strong> {{ formatCurrency(selectedEnrollment.amount, selectedEnrollment.currency) }}</p>
+                <p class="text-white"><strong>Payment Status:</strong> 
+                  <span [class]="getPaymentStatusColor(selectedEnrollment.paymentStatus) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                    {{ selectedEnrollment.paymentStatus }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-2">Progress Overview</h3>
+              <div class="bg-blue-800 rounded-lg p-4">
+                <div class="mb-4">
+                  <div class="flex justify-between text-sm mb-1">
+                    <span class="text-blue-300">Overall Progress</span>
+                    <span [class]="getEnrollmentProgressColor(selectedEnrollment.progress)">{{ selectedEnrollment.progress }}%</span>
+                  </div>
+                  <div class="w-full bg-blue-700 rounded-full h-3">
+                    <div [class]="getProgressBarColor(selectedEnrollment.progress) + ' h-3 rounded-full'" [style.width.%]="selectedEnrollment.progress"></div>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p class="text-blue-300">Modules</p>
+                    <p class="text-white font-bold">{{ selectedEnrollment.completedModules }}/{{ selectedEnrollment.totalModules }}</p>
+                  </div>
+                  <div>
+                    <p class="text-blue-300">Assignments</p>
+                    <p class="text-white font-bold">{{ selectedEnrollment.completedAssignments }}/{{ selectedEnrollment.totalAssignments }}</p>
+                  </div>
+                  <div>
+                    <p class="text-blue-300">Quizzes</p>
+                    <p class="text-white font-bold">{{ selectedEnrollment.completedQuizzes }}/{{ selectedEnrollment.totalQuizzes }}</p>
+                  </div>
+                  <div>
+                    <p class="text-blue-300">Grade</p>
+                    <p [class]="getGradeColor(selectedEnrollment.grade || '0')" class="font-bold">{{ selectedEnrollment.grade || 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-2">Status Information</h3>
+              <div class="bg-blue-800 rounded-lg p-4">
+                <p class="text-white"><strong>Status:</strong> 
+                  <span [class]="getStatusColor(selectedEnrollment.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                    <i [class]="getStatusIcon(selectedEnrollment.status)" class="mr-1"></i>
+                    {{ selectedEnrollment.status }}
+                  </span>
+                </p>
+                <p *ngIf="selectedEnrollment.completionDate" class="text-white"><strong>Completion Date:</strong> {{ formatDate(selectedEnrollment.completionDate) }}</p>
+                <p class="text-white"><strong>Certificate Earned:</strong> 
+                  <span [class]="selectedEnrollment.certificateEarned ? 'text-green-500' : 'text-red-500'">
+                    {{ selectedEnrollment.certificateEarned ? 'Yes' : 'No' }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Detail Modal -->
+    <div *ngIf="isViewingApplication && selectedApplication" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-blue-900 rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-white">Application Details</h2>
+          <button (click)="resetForms()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-times mr-2"></i>Close
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="bg-blue-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Student Information</h3>
+            <p class="text-white"><strong>Name:</strong> {{ selectedApplication.studentName }}</p>
+            <p class="text-white"><strong>Email:</strong> {{ selectedApplication.studentEmail }}</p>
+            <p class="text-white"><strong>Application Date:</strong> {{ formatDate(selectedApplication.applicationDate) }}</p>
+          </div>
+          
+          <div class="bg-blue-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Course Information</h3>
+            <p class="text-white"><strong>Course:</strong> {{ selectedApplication.courseTitle }}</p>
+            <p class="text-white"><strong>Status:</strong> 
+              <span [class]="getStatusColor(selectedApplication.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                <i [class]="getStatusIcon(selectedApplication.status)" class="mr-1"></i>
+                {{ selectedApplication.status }}
+              </span>
+            </p>
+            <p *ngIf="selectedApplication.approvedBy" class="text-white"><strong>Approved By:</strong> {{ selectedApplication.approvedBy }}</p>
+            <p *ngIf="selectedApplication.approvedAt" class="text-white"><strong>Approved At:</strong> {{ formatDate(selectedApplication.approvedAt) }}</p>
+            <p *ngIf="selectedApplication.rejectionReason" class="text-white"><strong>Rejection Reason:</strong> {{ selectedApplication.rejectionReason }}</p>
+          </div>
+          
+          <div *ngIf="selectedApplication.documents && selectedApplication.documents.length > 0" class="bg-blue-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Documents</h3>
+            <div class="space-y-2">
+              <a *ngFor="let doc of selectedApplication.documents" href="{{ doc }}" target="_blank" class="block bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+                <i class="fas fa-file-pdf mr-2"></i>View Document
+              </a>
+            </div>
+          </div>
+          
+          <div *ngIf="selectedApplication.notes" class="bg-blue-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Notes</h3>
+            <p class="text-white">{{ selectedApplication.notes }}</p>
+          </div>
+          
+          <div *ngIf="selectedApplication.status === 'PENDING'" class="bg-blue-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Actions</h3>
+            <div class="flex space-x-2">
+              <button (click)="approveApplication(selectedApplication)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors">
+                <i class="fas fa-check mr-2"></i>Approve
+              </button>
+              <button (click)="waitlistApplication(selectedApplication)" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded transition-colors">
+                <i class="fas fa-hourglass-half mr-2"></i>Waitlist
+              </button>
+              <button (click)="rejectApplication(selectedApplication)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors">
+                <i class="fas fa-ban mr-2"></i>Reject
+              </button>
+            </div>
+            <div *ngIf="isProcessingApplication" class="mt-4">
+              <input 
+                type="text" 
+                [(ngModel)]="rejectionReason"
+                placeholder="Rejection reason..."
+                class="w-full bg-blue-700 text-white px-4 py-2 rounded border border-blue-600 focus:outline-none focus:border-blue-500"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,215 @@
+### Certificate System Tests
+
+# Variables
+@baseUrl = http://localhost:3000
+@adminToken = {{loginAdmin.response.body.access_token}}
+@instructorToken = {{loginInstructor.response.body.access_token}}
+@studentToken = {{loginStudent.response.body.access_token}}
+
+### Login as Admin
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password123"
+}
+
+### Login as Instructor
+# @name loginInstructor
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "instructor@example.com",
+  "password": "password123"
+}
+
+### Login as Student
+# @name loginStudent
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "password123"
+}
+
+### ========================================
+### Certificate Management
+### ========================================
+
+### Create Certificate (Instructor)
+POST {{baseUrl}}/certificates
+Authorization: Bearer {{instructorToken}}
+Content-Type: application/json
+
+{
+  "userId": "student-user-id",
+  "courseId": "course-id",
+  "enrollmentId": "enrollment-id",
+  "type": "completion",
+  "expiresAt": "2025-12-31T23:59:59.000Z",
+  "metadata": {
+    "achievement": "Outstanding Performance",
+    "grade": "A+"
+  }
+}
+
+### Generate Certificate for Course Completion
+POST {{baseUrl}}/certificates/generate-for-completion/enrollment-id
+Authorization: Bearer {{studentToken}}
+
+### Get All Certificates (Admin Only)
+GET {{baseUrl}}/certificates
+Authorization: Bearer {{adminToken}}
+
+### Get My Certificates (Student)
+GET {{baseUrl}}/certificates/my-certificates
+Authorization: Bearer {{studentToken}}
+
+### Get Specific Certificate
+GET {{baseUrl}}/certificates/certificate-id
+Authorization: Bearer {{studentToken}}
+
+### Verify Certificate (Public)
+GET {{baseUrl}}/certificates/verify/verification-code
+
+### Revoke Certificate (Instructor)
+POST {{baseUrl}}/certificates/certificate-id/revoke
+Authorization: Bearer {{instructorToken}}
+
+### ========================================
+### Course Progress with Certificate Generation
+### ========================================
+
+### Get Course Progress (triggers certificate generation if completed)
+GET {{baseUrl}}/progress/course/enrollment-id
+Authorization: Bearer {{studentToken}}
+
+### ========================================
+### Test Scenarios
+### ========================================
+
+### Scenario 1: Complete Course and Generate Certificate
+# 1. Complete all modules
+POST {{baseUrl}}/progress/mark-completed/enrollment-id/module-id
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "forceComplete": true,
+  "completionReason": "All materials completed"
+}
+
+# 2. Pass all quizzes
+POST {{baseUrl}}/quiz/quiz-id/submit
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [
+    {
+      "questionId": "question-id",
+      "response": "correct-answer"
+    }
+  ]
+}
+
+# 3. Check progress (should trigger certificate generation)
+GET {{baseUrl}}/progress/course/enrollment-id
+Authorization: Bearer {{studentToken}}
+
+### Scenario 2: Manual Certificate Creation
+# Create achievement certificate
+POST {{baseUrl}}/certificates
+Authorization: Bearer {{instructorToken}}
+Content-Type: application/json
+
+{
+  "userId": "student-user-id",
+  "courseId": "course-id",
+  "enrollmentId": "enrollment-id",
+  "type": "achievement",
+  "metadata": {
+    "achievement": "Perfect Score",
+    "specialRecognition": "Top Performer"
+  }
+}
+
+### Scenario 3: Certificate Verification
+# Verify a certificate using its verification code
+GET {{baseUrl}}/certificates/verify/abc123def456
+
+### ========================================
+### Error Handling Tests
+### ========================================
+
+### Try to create certificate without permission
+POST {{baseUrl}}/certificates
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "userId": "student-user-id",
+  "courseId": "course-id",
+  "enrollmentId": "enrollment-id",
+  "type": "completion"
+}
+
+### Try to access certificate that doesn't belong to user
+GET {{baseUrl}}/certificates/other-user-certificate-id
+Authorization: Bearer {{studentToken}}
+
+### Try to revoke certificate without permission
+POST {{baseUrl}}/certificates/certificate-id/revoke
+Authorization: Bearer {{studentToken}}
+
+### ========================================
+### Certificate Types Test
+### ========================================
+
+### Create Completion Certificate
+POST {{baseUrl}}/certificates
+Authorization: Bearer {{instructorToken}}
+Content-Type: application/json
+
+{
+  "userId": "student-user-id",
+  "courseId": "course-id",
+  "enrollmentId": "enrollment-id",
+  "type": "completion"
+}
+
+### Create Achievement Certificate
+POST {{baseUrl}}/certificates
+Authorization: Bearer {{instructorToken}}
+Content-Type: application/json
+
+{
+  "userId": "student-user-id",
+  "courseId": "course-id",
+  "enrollmentId": "enrollment-id",
+  "type": "achievement",
+  "metadata": {
+    "achievement": "Perfect Score",
+    "recognition": "Outstanding Performance"
+  }
+}
+
+### Create Participation Certificate
+POST {{baseUrl}}/certificates
+Authorization: Bearer {{instructorToken}}
+Content-Type: application/json
+
+{
+  "userId": "student-user-id",
+  "courseId": "course-id",
+  "enrollmentId": "enrollment-id",
+  "type": "participation",
+  "metadata": {
+    "participationLevel": "Active",
+    "contribution": "Valuable insights in discussions"
+  }
+}

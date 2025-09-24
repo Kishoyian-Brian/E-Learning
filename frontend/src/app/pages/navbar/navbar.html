@@ -1,0 +1,217 @@
+<nav class="bg-primary border-b border-accent sticky top-0 z-50">
+  <div class="w-full px-2 sm:px-4">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <a routerLink="/" class="flex items-center">
+            <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-graduation-cap text-white text-lg"></i>
+            </div>
+            <span class="text-white font-bold text-xl">EduSoma</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a 
+            *ngFor="let item of navigationItems" 
+            [routerLink]="item.path"
+            routerLinkActive="active-nav-item"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-link text-accent hover:bg-secondary hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+          >
+            <i [class]="item.icon" class="mr-2"></i>
+            {{ item.name }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Right side items -->
+      <div class="flex items-center space-x-4">
+        <!-- Search - Show on all pages -->
+        <div class="relative">
+          <button 
+            (click)="toggleSearch()"
+            class="text-accent hover:text-white p-2 rounded-md transition-colors"
+          >
+            <i class="fas fa-search"></i>
+          </button>
+          
+          <!-- Search dropdown -->
+          <div 
+            *ngIf="isSearchOpen"
+            class="absolute right-0 mt-2 w-80 bg-secondary rounded-lg shadow-lg border border-accent p-4"
+          >
+            <div class="flex">
+              <input 
+                type="text" 
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()"
+                placeholder="Search courses, instructors..."
+                class="flex-1 bg-primary text-white px-3 py-2 rounded-l-md border border-accent focus:outline-none focus:border-accent"
+              >
+              <button 
+                (click)="onSearch()"
+                class="bg-accent hover:bg-secondary text-white px-4 py-2 rounded-r-md transition-colors"
+              >
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Features - Only show on authenticated pages -->
+        <div *ngIf="isAuthenticatedPage()" class="flex items-center space-x-4">
+          <!-- Notifications -->
+          <div class="relative">
+            <button (click)="toggleNotificationDropdown()" class="text-accent hover:text-white p-2 rounded-md transition-colors relative">
+              <i class="fas fa-bell"></i>
+              <span 
+                *ngIf="getNotificationCount() > 0"
+                class="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+              >
+                {{ getNotificationCount() }}
+              </span>
+            </button>
+            <div *ngIf="isNotificationDropdownOpen" class="absolute right-0 mt-2 w-80 bg-secondary rounded-lg shadow-lg border border-accent p-4 z-50">
+              <div *ngIf="notifications.length === 0" class="text-accent text-sm">No notifications</div>
+              <div *ngFor="let notification of notifications" class="mb-2 last:mb-0 p-2 rounded hover:bg-primary cursor-pointer">
+                <div class="font-semibold text-white">{{ notification.title }}</div>
+                <div class="text-accent text-xs">{{ notification.message }}</div>
+                <div class="text-gray-400 text-xs mt-1">{{ notification.timestamp | date:'short' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Menu -->
+          <div class="relative">
+            <button 
+              (click)="toggleUserMenu()"
+              class="flex items-center text-accent hover:text-white p-2 rounded-md transition-colors"
+            >
+              <img 
+                [src]="getUserAvatar()" 
+                [alt]="getUserDisplayName()"
+                class="w-8 h-8 rounded-full mr-2"
+              >
+              <span class="hidden sm:block text-sm font-medium">{{ getUserDisplayName() }}</span>
+              <i class="fas fa-chevron-down ml-1 text-xs"></i>
+            </button>
+
+            <!-- User dropdown -->
+            <div 
+              *ngIf="isUserMenuOpen"
+              class="absolute right-0 mt-2 w-48 bg-secondary rounded-lg shadow-lg border border-accent py-1"
+            >
+              <div class="px-4 py-2 border-b border-accent">
+                <p class="text-white text-sm font-medium">{{ getUserDisplayName() }}</p>
+                <p class="text-accent text-xs">{{ currentUser?.email }}</p>
+                <p class="text-accent text-xs capitalize">{{ getUserRole() }}</p>
+              </div>
+              
+              <a 
+                *ngFor="let item of userMenuItems"
+                [routerLink]="item.path"
+                class="block px-4 py-2 text-accent hover:bg-primary hover:text-white text-sm transition-colors"
+              >
+                <i [class]="item.icon" class="mr-2"></i>
+                {{ item.name }}
+              </a>
+              
+              <div class="border-t border-accent mt-1">
+                <button 
+                  (click)="logout()"
+                  class="block w-full text-left px-4 py-2 text-accent hover:bg-primary hover:text-white text-sm transition-colors"
+                >
+                  <i class="fas fa-sign-out-alt mr-2"></i>
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="md:hidden">
+          <button 
+            (click)="toggleMenu()"
+            class="text-accent hover:text-white p-2 rounded-md transition-colors"
+          >
+            <i [class]="isMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div 
+      *ngIf="isMenuOpen"
+      class="md:hidden border-t border-accent"
+    >
+      <div class="px-2 pt-2 pb-3 space-y-1">
+        <a 
+          *ngFor="let item of navigationItems"
+          [routerLink]="item.path"
+          (click)="closeMenus()"
+          routerLinkActive="bg-secondary text-white"
+          class="text-accent hover:bg-secondary hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+        >
+          <i [class]="item.icon" class="mr-2"></i>
+          {{ item.name }}
+        </a>
+        
+        <!-- Mobile authenticated features -->
+        <div *ngIf="isAuthenticatedPage()" class="border-t border-accent pt-2 mt-2">
+          <a 
+            routerLink="/messages"
+            (click)="closeMenus()"
+            class="text-accent hover:bg-secondary hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+          >
+            <i class="fas fa-comments mr-2"></i>
+            Messages
+          </a>
+          <a 
+            routerLink="/notifications"
+            (click)="closeMenus()"
+            class="text-accent hover:bg-secondary hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+          >
+            <i class="fas fa-bell mr-2"></i>
+            Notifications
+          </a>
+          <a 
+            routerLink="/cart"
+            (click)="closeMenus()"
+            class="text-accent hover:bg-secondary hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+          >
+            <i class="fas fa-shopping-cart mr-2"></i>
+            Cart
+            <span 
+              *ngIf="getCartItemCount() > 0"
+              class="ml-2 bg-accent text-white text-xs rounded-full h-5 w-5 inline-flex items-center justify-center"
+            >
+              {{ getCartItemCount() }}
+            </span>
+          </a>
+          <a 
+            routerLink="/profile"
+            (click)="closeMenus()"
+            class="text-accent hover:bg-secondary hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+          >
+            <i class="fas fa-user mr-2"></i>
+            Profile
+          </a>
+          <button 
+            (click)="logout(); closeMenus()"
+            class="w-full text-left text-accent hover:bg-secondary hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+          >
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

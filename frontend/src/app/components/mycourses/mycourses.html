@@ -1,0 +1,345 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <header class="bg-primary border-b border-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-white">My Courses</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button (click)="switchTab('all-courses')" class="bg-accent hover:bg-secondary text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-th-large mr-2"></i>All Courses
+          </button>
+          <button (click)="switchTab('in-progress')" class="bg-accent hover:bg-secondary text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-play mr-2"></i>Continue Learning
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="bg-secondary border-b border-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <button 
+          (click)="switchTab('all-courses')"
+          [class]="selectedTab === 'all-courses' ? 'border-b-2 border-accent text-accent' : 'text-accent hover:text-white'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-th-large mr-2"></i>All Courses
+        </button>
+        <button 
+          (click)="switchTab('in-progress')"
+          [class]="selectedTab === 'in-progress' ? 'border-b-2 border-accent text-accent' : 'text-accent hover:text-white'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-play mr-2"></i>In Progress
+        </button>
+        <button 
+          (click)="switchTab('completed')"
+          [class]="selectedTab === 'completed' ? 'border-b-2 border-accent text-accent' : 'text-accent hover:text-white'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-check-circle mr-2"></i>Completed
+        </button>
+        <button 
+          (click)="switchTab('favorites')"
+          [class]="selectedTab === 'favorites' ? 'border-b-2 border-accent text-accent' : 'text-accent hover:text-white'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-heart mr-2"></i>Favorites
+        </button>
+        <button 
+          (click)="switchTab('recent')"
+          [class]="selectedTab === 'recent' ? 'border-b-2 border-accent text-accent' : 'text-accent hover:text-white'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-clock mr-2"></i>Recent
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Progress Overview -->
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-secondary rounded-lg p-6 border border-accent">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-accent">
+            <i class="fas fa-book text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-accent text-sm font-medium">Total Courses</p>
+            <p class="text-2xl font-bold text-white">{{ getTotalCourses() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-secondary rounded-lg p-6 border border-accent">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-accent">
+            <i class="fas fa-play text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-accent text-sm font-medium">In Progress</p>
+            <p class="text-2xl font-bold text-white">{{ getInProgressCoursesCount() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-secondary rounded-lg p-6 border border-accent">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-accent">
+            <i class="fas fa-check-circle text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-accent text-sm font-medium">Completed</p>
+            <p class="text-2xl font-bold text-white">{{ getCompletedCoursesCount() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-secondary rounded-lg p-6 border border-accent">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-accent">
+            <i class="fas fa-clock text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-accent text-sm font-medium">Study Time</p>
+            <p class="text-2xl font-bold text-white">{{ formatStudyTime(getTotalStudyTime()) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Progress -->
+    <div class="bg-secondary rounded-lg p-6 border border-accent mb-8">
+      <h2 class="text-xl font-semibold text-white mb-4">Overall Progress</h2>
+      <div class="flex items-center">
+        <div class="flex-1 mr-4">
+          <div class="flex justify-between text-sm mb-2">
+            <span class="text-accent">Overall Completion</span>
+            <span class="text-accent">{{ getTotalProgress() }}%</span>
+          </div>
+          <div class="w-full bg-primary rounded-full h-3">
+            <div class="bg-accent h-3 rounded-full" [style.width.%]="getTotalProgress()"></div>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-accent text-sm">{{ getCompletedCoursesCount() }} of {{ getTotalCourses() }} courses completed</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-secondary rounded-lg p-6 border border-accent mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm"
+            placeholder="Search your courses..."
+            class="w-full bg-primary text-white px-4 py-2 rounded-lg border border-accent focus:outline-none focus:border-accent"
+          >
+        </div>
+        <div class="md:w-48">
+          <select 
+            [(ngModel)]="selectedProgress"
+            class="w-full bg-primary text-white px-4 py-2 rounded-lg border border-accent focus:outline-none focus:border-accent"
+          >
+            <option value="all">All Progress</option>
+            <option value="not-started">Not Started</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="md:w-48">
+          <select 
+            [(ngModel)]="selectedStatus"
+            class="w-full bg-primary text-white px-4 py-2 rounded-lg border border-accent focus:outline-none focus:border-accent"
+          >
+            <option value="all">All Status</option>
+            <option value="APPROVED">Approved</option>
+            <option value="PENDING">Pending</option>
+            <option value="WAITLISTED">Waitlisted</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue Learning Section -->
+    <div *ngIf="selectedTab === 'in-progress' && getInProgressCourses().length > 0" class="mb-8">
+      <h2 class="text-2xl font-bold text-white mb-6">Continue Learning</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let course of getInProgressCourses()" class="bg-secondary rounded-lg border border-accent overflow-hidden hover:shadow-lg transition-all duration-300">
+          <!-- Course Image -->
+          <div class="relative h-48 bg-gradient-to-br from-accent to-secondary">
+            <div class="w-full h-full flex items-center justify-center">
+              <i class="fas fa-graduation-cap text-6xl text-white opacity-50"></i>
+            </div>
+            <div class="absolute top-4 left-4">
+              <span class="bg-accent text-white px-2 py-1 rounded-full text-xs font-medium">
+                <i class="fas fa-play mr-1"></i>In Progress
+              </span>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-accent text-white px-2 py-1 rounded-full text-xs font-medium">
+                {{ course.difficulty.name }}
+              </span>
+            </div>
+            <div class="absolute bottom-4 left-4">
+              <span class="bg-accent text-white px-2 py-1 rounded text-xs font-medium">
+                {{ getEnrollmentByCourseId(course.id)?.progress }}% Complete
+              </span>
+            </div>
+          </div>
+
+          <!-- Course Content -->
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-white mb-2">{{ course.title }}</h3>
+            <p class="text-accent text-sm mb-4">{{ course.description }}</p>
+            
+            <!-- Progress Bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-accent">Progress</span>
+                <span class="text-accent">{{ getEnrollmentByCourseId(course.id)?.progress }}%</span>
+              </div>
+              <div class="w-full bg-primary rounded-full h-2">
+                <div class="bg-accent h-2 rounded-full" [style.width.%]="getEnrollmentByCourseId(course.id)?.progress"></div>
+              </div>
+            </div>
+
+            <!-- Course Stats -->
+            <div class="flex items-center justify-between mb-4 text-sm">
+              <div class="flex items-center text-accent">
+                <i class="fas fa-calendar mr-1"></i>
+                <span>{{ formatDate(course.createdAt) }}</span>
+              </div>
+              <div class="flex items-center text-accent">
+                <i class="fas fa-book mr-1"></i>
+                <span>{{ course._count?.modules || 0 }} modules</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-2">
+              <button (click)="continueCourse(course)" class="flex-1 bg-accent hover:bg-secondary text-white px-3 py-2 rounded text-sm transition-colors">
+                <i class="fas fa-play mr-1"></i>Continue
+              </button>
+              <button (click)="viewCourse(course)" class="bg-accent hover:bg-secondary text-white px-3 py-2 rounded text-sm transition-colors">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Courses Grid -->
+    <div *ngIf="selectedTab === 'all-courses' || selectedTab === 'completed' || selectedTab === 'favorites' || selectedTab === 'recent'">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let course of getFilteredCourses()" class="bg-secondary rounded-lg border border-accent overflow-hidden hover:shadow-lg transition-all duration-300">
+          <!-- Course Image -->
+          <div class="relative h-48 bg-gradient-to-br from-accent to-secondary">
+            <div class="w-full h-full flex items-center justify-center">
+              <i class="fas fa-graduation-cap text-6xl text-white opacity-50"></i>
+            </div>
+            <div class="absolute top-4 left-4">
+              <span class="bg-accent text-white px-2 py-1 rounded-full text-xs font-medium">
+                <i [class]="getStatusIcon(getEnrollmentByCourseId(course.id)?.status || 'APPROVED')" class="mr-1"></i>
+                {{ getEnrollmentByCourseId(course.id)?.status || 'APPROVED' }}
+              </span>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-accent text-white px-2 py-1 rounded-full text-xs font-medium">
+                {{ course.difficulty.name }}
+              </span>
+            </div>
+            <div *ngIf="getEnrollmentByCourseId(course.id)?.progress === 100" class="absolute bottom-4 left-4">
+              <span class="bg-accent text-white px-2 py-1 rounded text-xs font-medium">
+                <i class="fas fa-certificate mr-1"></i>Completed
+              </span>
+            </div>
+          </div>
+
+          <!-- Course Content -->
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-lg font-semibold text-white line-clamp-2">{{ course.title }}</h3>
+              <button 
+                (click)="markAsFavorite(course)"
+                [class]="getEnrollmentByCourseId(course.id)?.isFavorite ? 'text-accent' : 'text-accent opacity-50'"
+                class="ml-2 hover:text-white transition-colors"
+              >
+                <i class="fas fa-heart"></i>
+              </button>
+            </div>
+            
+            <p class="text-accent text-sm mb-4 line-clamp-2">{{ course.description }}</p>
+            
+            <!-- Progress Bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-accent">Progress</span>
+                <span class="text-accent">{{ getEnrollmentByCourseId(course.id)?.progress || 0 }}%</span>
+              </div>
+              <div class="w-full bg-primary rounded-full h-2">
+                <div class="bg-accent h-2 rounded-full" [style.width.%]="getEnrollmentByCourseId(course.id)?.progress || 0"></div>
+              </div>
+            </div>
+
+            <!-- Course Stats -->
+            <div class="flex items-center justify-between mb-4 text-sm">
+              <div class="flex items-center text-accent">
+                <i class="fas fa-calendar mr-1"></i>
+                <span>{{ formatDate(course.createdAt) }}</span>
+              </div>
+              <div class="flex items-center text-accent">
+                <i class="fas fa-book mr-1"></i>
+                <span>{{ course._count?.modules || 0 }} modules</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-2">
+              <button 
+                (click)="continueCourse(course)" 
+                *ngIf="(getEnrollmentByCourseId(course.id)?.progress || 0) < 100"
+                class="flex-1 bg-accent hover:bg-secondary text-white px-3 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-play mr-1"></i>Continue
+              </button>
+              <button 
+                (click)="downloadCertificate(course)" 
+                *ngIf="(getEnrollmentByCourseId(course.id)?.progress || 0) === 100"
+                class="flex-1 bg-accent hover:bg-secondary text-white px-3 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-download mr-1"></i>Certificate
+              </button>
+              <button (click)="viewCourse(course)" class="bg-accent hover:bg-secondary text-white px-3 py-2 rounded text-sm transition-colors">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="getFilteredCourses().length === 0" class="text-center py-16">
+        <div class="text-accent text-6xl mb-4">
+          <i class="fas fa-book"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">No courses found</h3>
+        <p class="text-accent">Try adjusting your search criteria or browse our course catalog.</p>
+      </div>
+    </div>
+  </main>
+</div> 

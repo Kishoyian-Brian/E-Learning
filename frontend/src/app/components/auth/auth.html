@@ -1,0 +1,479 @@
+    <div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <div class="bg-blue-900 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-white">
+            {{ isLoginMode ? 'Sign In' : 'Create Account' }}
+          </h1>
+          <p class="text-blue-300 mt-1">
+            {{ isLoginMode ? 'Welcome back to EduSoma' : 'Join thousands of learners worldwide' }}
+          </p>
+        </div>
+        <button 
+          (click)="toggleMode()"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          <i class="fas fa-exchange-alt mr-2"></i>
+          {{ isLoginMode ? 'Sign Up' : 'Sign In' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      
+      <!-- Login Form -->
+      <div *ngIf="isLoginMode" class="bg-blue-900 rounded-lg border border-blue-800 p-8">
+        <h2 class="text-2xl font-bold text-white mb-6">Sign In to Your Account</h2>
+        
+        <!-- Status Messages -->
+        <div *ngIf="successMessage" class="mb-6 p-4 rounded-lg border bg-green-900 border-green-700">
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-green-400 mr-3"></i>
+            <span class="text-green-300">{{ successMessage }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="mb-6 p-4 rounded-lg border bg-red-900 border-red-700">
+          <div class="flex items-center">
+            <i class="fas fa-exclamation-circle text-red-400 mr-3"></i>
+            <span class="text-red-300">{{ errorMessage }}</span>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onLoginSubmit()" class="space-y-6">
+          <!-- Email Field -->
+          <div>
+            <label for="loginEmail" class="block text-blue-300 text-sm font-medium mb-2">
+              Email Address
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-envelope text-gray-500"></i>
+              </div>
+              <input 
+                type="email" 
+                id="loginEmail"
+                [(ngModel)]="loginForm.email"
+                name="loginEmail"
+                [class]="loginErrors['email'] ? 'border-red-500 focus:border-red-500' : 'border-blue-700 focus:border-blue-500'"
+                class="w-full bg-white text-gray-900 pl-10 pr-4 py-3 rounded-lg border focus:outline-none transition-colors"
+                placeholder="Enter your email"
+                required
+              >
+            </div>
+            <p *ngIf="loginErrors['email']" class="mt-1 text-red-400 text-sm">{{ loginErrors['email'] }}</p>
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <label for="loginPassword" class="block text-blue-300 text-sm font-medium mb-2">
+              Password
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-500"></i>
+              </div>
+              <input 
+                [type]="getLoginPasswordType()"
+                id="loginPassword"
+                [(ngModel)]="loginForm.password"
+                name="loginPassword"
+                [class]="loginErrors['password'] ? 'border-red-500 focus:border-red-500' : 'border-blue-700 focus:border-blue-500'"
+                class="w-full bg-white text-gray-900 pl-10 pr-12 py-3 rounded-lg border focus:outline-none transition-colors"
+                placeholder="Enter your password"
+                required
+              >
+              <button 
+                type="button"
+                (click)="toggleLoginPasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <i [class]="getLoginPasswordIcon()"></i>
+              </button>
+            </div>
+            <p *ngIf="loginErrors['password']" class="mt-1 text-red-400 text-sm">{{ loginErrors['password'] }}</p>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input 
+                type="checkbox" 
+                id="rememberMe"
+                [(ngModel)]="loginForm.rememberMe"
+                name="rememberMe"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded bg-white"
+              >
+              <label for="rememberMe" class="ml-2 block text-sm text-blue-300">
+                Remember me
+              </label>
+            </div>
+            <button 
+              type="button"
+              class="text-sm text-blue-400 hover:text-white transition-colors"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit"
+            [disabled]="loading || isAnySocialLoginLoading"
+            [class]="loading || isAnySocialLoginLoading ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
+            class="w-full text-white py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-900"
+          >
+            <i *ngIf="loading" class="fas fa-spinner fa-spin mr-2"></i>
+            <i *ngIf="!loading" class="fas fa-sign-in-alt mr-2"></i>
+            {{ loading ? 'Signing in...' : 'Sign In' }}
+          </button>
+        </form>
+
+        <!-- Demo Credentials -->
+        <div class="mt-6 p-4 bg-blue-800 rounded-lg border border-blue-700">
+          <h3 class="text-sm font-medium text-blue-300 mb-2">Demo Credentials</h3>
+          <div class="text-xs text-blue-400 space-y-1">
+            <p><strong>Email:</strong> demo&#64;example.com</p>
+            <p><strong>Password:</strong> password</p>
+          </div>
+          <button 
+            (click)="useDemoCredentials()"
+            class="mt-2 text-xs text-blue-400 hover:text-white transition-colors"
+          >
+            <i class="fas fa-magic mr-1"></i>Use Demo Credentials
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-blue-700"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-blue-900 text-blue-300">Or continue with</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Login Buttons -->
+        <div class="mt-6 grid grid-cols-3 gap-3">
+          <button 
+            (click)="loginWithGoogle()"
+            [disabled]="loading || isAnySocialLoginLoading"
+            class="w-full inline-flex justify-center py-2 px-4 border border-blue-700 rounded-lg shadow-sm bg-blue-800 text-sm font-medium text-blue-300 hover:bg-blue-700 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i *ngIf="socialLoginLoading['google']" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!socialLoginLoading['google']" class="fab fa-google"></i>
+          </button>
+          <button 
+            (click)="loginWithFacebook()"
+            [disabled]="loading || isAnySocialLoginLoading"
+            class="w-full inline-flex justify-center py-2 px-4 border border-blue-700 rounded-lg shadow-sm bg-blue-800 text-sm font-medium text-blue-300 hover:bg-blue-700 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i *ngIf="socialLoginLoading['facebook']" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!socialLoginLoading['facebook']" class="fab fa-facebook-f"></i>
+          </button>
+          <button 
+            (click)="loginWithGithub()"
+            [disabled]="loading || isAnySocialLoginLoading"
+            class="w-full inline-flex justify-center py-2 px-4 border border-blue-700 rounded-lg shadow-sm bg-blue-800 text-sm font-medium text-blue-300 hover:bg-blue-700 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i *ngIf="socialLoginLoading['github']" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!socialLoginLoading['github']" class="fab fa-github"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div *ngIf="!isLoginMode" class="bg-blue-900 rounded-lg border border-blue-800 p-8">
+        <h2 class="text-2xl font-bold text-white mb-6">Create Your Account</h2>
+        
+        <!-- Status Messages -->
+        <div *ngIf="successMessage" class="mb-6 p-4 rounded-lg border bg-green-900 border-green-700">
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-green-400 mr-3"></i>
+            <span class="text-green-300">{{ successMessage }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="mb-6 p-4 rounded-lg border bg-red-900 border-red-700">
+          <div class="flex items-center">
+            <i class="fas fa-exclamation-circle text-red-400 mr-3"></i>
+            <span class="text-red-300">{{ errorMessage }}</span>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onRegisterSubmit()" class="space-y-6">
+          <!-- Name Field -->
+          <div>
+            <label for="name" class="block text-blue-300 text-sm font-medium mb-2">
+              Full Name
+            </label>
+            <input 
+              type="text" 
+              id="name"
+              [(ngModel)]="registerForm.name"
+              name="name"
+              [class]="'w-full bg-white text-gray-900 px-4 py-3 rounded-lg border focus:outline-none transition-colors ' + (registerErrors['name'] ? 'border-red-500 focus:border-red-500' : 'border-blue-700 focus:border-blue-500')"
+              placeholder="Enter your full name"
+              required
+            >
+            <p *ngIf="registerErrors['name']" class="mt-1 text-red-400 text-sm">{{ registerErrors['name'] }}</p>
+          </div>
+
+          <!-- Role Selection -->
+          <div>
+            <label for="role" class="block text-blue-300 text-sm font-medium mb-2">
+              Role
+            </label>
+            <select 
+              id="role"
+              [(ngModel)]="registerForm.role"
+              name="role"
+              [class]="'w-full bg-white text-gray-900 px-4 py-3 rounded-lg border focus:outline-none transition-colors ' + (registerErrors['role'] ? 'border-red-500 focus:border-red-500' : 'border-blue-700 focus:border-blue-500')"
+              required
+            >
+              <option value="STUDENT">Student</option>
+              <option value="INSTRUCTOR">Instructor</option>
+            </select>
+            <p *ngIf="registerErrors['role']" class="mt-1 text-red-400 text-sm">{{ registerErrors['role'] }}</p>
+          </div>
+
+          <!-- Email Field -->
+          <div>
+            <label for="registerEmail" class="block text-blue-300 text-sm font-medium mb-2">
+              Email Address
+            </label>
+            <input 
+              type="email" 
+              id="registerEmail"
+              [(ngModel)]="registerForm.email"
+              name="registerEmail"
+              [class]="registerErrors['email'] ? 'border-red-500 focus:border-red-500' : 'border-blue-700 focus:border-blue-500'"
+              class="w-full bg-white text-gray-900 px-4 py-3 rounded-lg border focus:outline-none transition-colors"
+              placeholder="Enter your email address"
+              required
+            >
+            <p *ngIf="registerErrors['email']" class="mt-1 text-red-400 text-sm">{{ registerErrors['email'] }}</p>
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <label for="registerPassword" class="block text-blue-300 text-sm font-medium mb-2">
+              Password
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-500"></i>
+              </div>
+              <input 
+                [type]="getRegisterPasswordType()"
+                id="registerPassword"
+                [(ngModel)]="registerForm.password"
+                name="registerPassword"
+                [class]="registerErrors['password'] ? 'border-red-500 focus:border-red-500' : 'border-blue-700 focus:border-blue-500'"
+                class="w-full bg-white text-gray-900 pl-10 pr-12 py-3 rounded-lg border focus:outline-none transition-colors"
+                placeholder="Create a strong password"
+                required
+              >
+              <button 
+                type="button"
+                (click)="toggleRegisterPasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <i [class]="getRegisterPasswordIcon()"></i>
+              </button>
+            </div>
+            <p *ngIf="registerErrors['password']" class="mt-1 text-red-400 text-sm">{{ registerErrors['password'] }}</p>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div>
+            <label for="confirmPassword" class="block text-blue-300 text-sm font-medium mb-2">
+              Confirm Password
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-500"></i>
+              </div>
+              <input 
+                [type]="getConfirmPasswordType()"
+                id="confirmPassword"
+                [(ngModel)]="registerForm.confirmPassword"
+                name="confirmPassword"
+                [class]="registerErrors['confirmPassword'] ? 'border-red-500 focus:border-red-500' : 'border-blue-700 focus:border-blue-500'"
+                class="w-full bg-white text-gray-900 pl-10 pr-12 py-3 rounded-lg border focus:outline-none transition-colors"
+                placeholder="Confirm your password"
+                required
+              >
+              <button 
+                type="button"
+                (click)="toggleConfirmPasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <i [class]="getConfirmPasswordIcon()"></i>
+              </button>
+            </div>
+            <p *ngIf="registerErrors['confirmPassword']" class="mt-1 text-red-400 text-sm">{{ registerErrors['confirmPassword'] }}</p>
+          </div>
+
+          <!-- Terms and Marketing -->
+          <div class="space-y-4">
+            <div class="flex items-start">
+              <input 
+                type="checkbox" 
+                id="agreeToTerms"
+                [(ngModel)]="registerForm.agreeToTerms"
+                name="agreeToTerms"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded bg-white mt-1"
+              >
+              <label for="agreeToTerms" class="ml-2 block text-sm text-blue-300">
+                I agree to the 
+                <a href="#" class="text-blue-400 hover:text-white transition-colors">Terms of Service</a> 
+                and 
+                <a href="#" class="text-blue-400 hover:text-white transition-colors">Privacy Policy</a>
+              </label>
+            </div>
+            <p *ngIf="registerErrors['agreeToTerms']" class="text-red-400 text-sm">{{ registerErrors['agreeToTerms'] }}</p>
+            
+            <div class="flex items-start">
+              <input 
+                type="checkbox" 
+                id="agreeToMarketing"
+                [(ngModel)]="registerForm.agreeToMarketing"
+                name="agreeToMarketing"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded bg-white mt-1"
+              >
+              <label for="agreeToMarketing" class="ml-2 block text-sm text-blue-300">
+                I would like to receive updates about new courses and features (optional)
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit"
+            [disabled]="loading || isAnySocialLoginLoading"
+            [class]="loading || isAnySocialLoginLoading ? 'bg-gray-600 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'"
+            class="w-full text-white py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-blue-900"
+          >
+            <i *ngIf="loading" class="fas fa-spinner fa-spin mr-2"></i>
+            <i *ngIf="!loading" class="fas fa-user-plus mr-2"></i>
+            {{ loading ? 'Creating Account...' : 'Create Account' }}
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-blue-700"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-blue-900 text-blue-300">Or sign up with</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Register Buttons -->
+        <div class="mt-6 grid grid-cols-3 gap-3">
+          <button 
+            (click)="loginWithGoogle()"
+            [disabled]="loading || isAnySocialLoginLoading"
+            class="w-full inline-flex justify-center py-2 px-4 border border-blue-700 rounded-lg shadow-sm bg-blue-800 text-sm font-medium text-blue-300 hover:bg-blue-700 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i *ngIf="socialLoginLoading['google']" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!socialLoginLoading['google']" class="fab fa-google"></i>
+          </button>
+          <button 
+            (click)="loginWithFacebook()"
+            [disabled]="loading || isAnySocialLoginLoading"
+            class="w-full inline-flex justify-center py-2 px-4 border border-blue-700 rounded-lg shadow-sm bg-blue-800 text-sm font-medium text-blue-300 hover:bg-blue-700 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i *ngIf="socialLoginLoading['facebook']" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!socialLoginLoading['facebook']" class="fab fa-facebook-f"></i>
+          </button>
+          <button 
+            (click)="loginWithGithub()"
+            [disabled]="loading || isAnySocialLoginLoading"
+            class="w-full inline-flex justify-center py-2 px-4 border border-blue-700 rounded-lg shadow-sm bg-blue-800 text-sm font-medium text-blue-300 hover:bg-blue-700 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i *ngIf="socialLoginLoading['github']" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!socialLoginLoading['github']" class="fab fa-github"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Benefits Section -->
+      <div class="lg:col-span-1">
+        <div class="bg-blue-900 rounded-lg border border-blue-800 p-8 h-full">
+          <h2 class="text-2xl font-bold text-white mb-6">
+            {{ isLoginMode ? 'Welcome Back!' : 'Why Choose EduSoma?' }}
+          </h2>
+          
+          <div class="space-y-6">
+            <div class="flex items-start">
+              <div class="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i class="fas fa-graduation-cap text-blue-300"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white mb-2">Expert Instructors</h3>
+                <p class="text-blue-300 text-sm">Learn from industry professionals and certified experts in their fields.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start">
+              <div class="w-10 h-10 bg-green-700 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i class="fas fa-certificate text-green-300"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white mb-2">Certified Courses</h3>
+                <p class="text-blue-300 text-sm">Earn certificates upon completion to boost your career and skills.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start">
+              <div class="w-10 h-10 bg-purple-700 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i class="fas fa-users text-purple-300"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white mb-2">Community Learning</h3>
+                <p class="text-blue-300 text-sm">Join a community of learners and collaborate on projects together.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start">
+              <div class="w-10 h-10 bg-yellow-700 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i class="fas fa-clock text-yellow-300"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white mb-2">Flexible Learning</h3>
+                <p class="text-blue-300 text-sm">Learn at your own pace with 24/7 access to course materials.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="mt-8 pt-6 border-t border-blue-800">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-white">50K+</div>
+                <div class="text-blue-300 text-sm">Students</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-white">500+</div>
+                <div class="text-blue-300 text-sm">Courses</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

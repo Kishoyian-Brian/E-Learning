@@ -1,0 +1,59 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
+body {
+  @apply bg-primary text-white min-h-screen font-sans;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #00173D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e40af;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+/* Ensure all elements inherit the color scheme */
+* {
+  box-sizing: border-box;
+}
+
+/* Custom utility classes using only 3 colors */
+.btn-primary {
+  @apply bg-accent hover:bg-secondary text-white px-4 py-2 rounded-lg transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-secondary hover:bg-accent text-white px-4 py-2 rounded-lg transition-colors;
+}
+
+.card {
+  @apply bg-secondary rounded-lg border border-accent p-6;
+}
+
+.card-dark {
+  @apply bg-primary rounded-lg border border-secondary p-6;
+}
+
+.text-muted {
+  @apply text-accent;
+}
+
+.bg-gradient {
+  @apply bg-gradient-to-br from-primary to-secondary;
+}

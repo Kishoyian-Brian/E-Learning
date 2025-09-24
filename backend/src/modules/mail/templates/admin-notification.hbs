@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Admin Notification: {{subject}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .details-box {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Admin Notification</h1>
+        <p>{{subject}}</p>
+    </div>
+    
+    <div class="content">
+        <h2>System Alert</h2>
+        
+        <div class="alert-box">
+            <h3>{{subject}}</h3>
+            <p><strong>Event Type:</strong> {{eventType}}</p>
+            <p><strong>Time:</strong> {{notificationTime}}</p>
+            <p><strong>Date:</strong> {{notificationDate}}</p>
+        </div>
+        
+        <div class="details-box">
+            <h3>Message</h3>
+            <p>{{message}}</p>
+            
+            {{#if details}}
+            <h3>Additional Details</h3>
+            <pre>{{details}}</pre>
+            {{/if}}
+        </div>
+        
+        <p>This is an automated notification from the E-Learning Platform system.</p>
+        
+        <p>Please review this information and take appropriate action if necessary.</p>
+        
+        <p>Best regards,<br>
+        E-Learning Platform System</p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated system notification.</p>
+        <p>© 2025 E-Learning Platform. All rights reserved.</p>
+    </div>
+</body>
+</html> 

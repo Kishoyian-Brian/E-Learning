@@ -1,0 +1,285 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <header class="bg-primary border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-white">Certificate Management</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-plus mr-2"></i>Issue Certificate
+          </button>
+          <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-download mr-2"></i>Bulk Export
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="bg-blue-900 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <button 
+          (click)="switchTab('certificates')"
+          [class]="selectedTab === 'certificates' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-certificate mr-2"></i>Certificates
+        </button>
+        <button 
+          (click)="switchTab('requests')"
+          [class]="selectedTab === 'requests' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-clock mr-2"></i>Requests
+        </button>
+
+        <button 
+          (click)="switchTab('verify')"
+          [class]="selectedTab === 'verify' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-search mr-2"></i>Verify
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Certificates Tab -->
+    <div *ngIf="!loading && selectedTab === 'certificates'">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-600">
+              <i class="fas fa-certificate text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Total Issued</p>
+              <p class="text-2xl font-bold text-white">{{ stats?.totalIssued || 0 }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-600">
+              <i class="fas fa-clock text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Active</p>
+              <p class="text-2xl font-bold text-white">{{ getActiveCertificates().length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-600">
+              <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Expired</p>
+              <p class="text-2xl font-bold text-white">{{ getExpiredCertificates().length }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-red-600">
+              <i class="fas fa-ban text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Revoked</p>
+              <p class="text-2xl font-bold text-white">{{ getRevokedCertificates().length }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="bg-blue-900 rounded-lg p-6 border border-blue-800 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              placeholder="Search by name, course, or certificate number..."
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+          </div>
+          <div class="md:w-48">
+            <select 
+              [(ngModel)]="selectedStatus"
+              class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value="ACTIVE">Active</option>
+              <option value="EXPIRED">Expired</option>
+              <option value="REVOKED">Revoked</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificates Table -->
+      <div class="bg-blue-900 rounded-lg border border-blue-800">
+        <div class="px-6 py-4 border-b border-blue-800">
+          <h2 class="text-xl font-semibold text-white">All Certificates</h2>
+        </div>
+        <div class="p-6">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-blue-700">
+                  <th class="py-3 px-4 text-blue-300 font-medium">Student</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Course</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Certificate #</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Issued Date</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Status</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Expiry</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let certificate of getFilteredCertificates()" class="border-b border-blue-800 hover:bg-blue-800">
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white font-medium">{{ certificate.userName }}</p>
+                      <p class="text-blue-400 text-sm">{{ certificate.instructorName }}</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white font-medium">{{ certificate.courseTitle }}</p>
+                      <p class="text-blue-400 text-sm">Grade: {{ certificate.grade || 'N/A' }}</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4 text-blue-300 font-mono">{{ certificate.certificateNumber }}</td>
+                  <td class="py-4 px-4 text-white">{{ formatDate(certificate.issuedAt) }}</td>
+                  <td class="py-4 px-4">
+                    <span [class]="getStatusColor(certificate.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                      <i [class]="getStatusIcon(certificate.status)" class="mr-1"></i>
+                      {{ certificate.status }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <span [class]="getExpiryColor(certificate)" class="text-sm">
+                      {{ getExpiryStatus(certificate) }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div class="flex space-x-2">
+                      <button (click)="viewCertificate(certificate)" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-eye mr-1"></i>View
+                      </button>
+                      <button *ngIf="canDownloadCertificate(certificate)" (click)="downloadCertificate(certificate)" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-download mr-1"></i>Download
+                      </button>
+                      <button *ngIf="certificate.status === 'ACTIVE'" (click)="revokeCertificate(certificate)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-ban mr-1"></i>Revoke
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requests Tab -->
+    <div *ngIf="!loading && selectedTab === 'requests'">
+      <div class="bg-blue-900 rounded-lg border border-blue-800">
+        <div class="px-6 py-4 border-b border-blue-800">
+          <h2 class="text-xl font-semibold text-white">Certificate Requests</h2>
+        </div>
+        <div class="p-6">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-blue-700">
+                  <th class="py-3 px-4 text-blue-300 font-medium">Student</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Course</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Requested Date</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Status</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let request of getFilteredRequests()" class="border-b border-blue-800 hover:bg-blue-800">
+                  <td class="py-4 px-4">
+                    <p class="text-white font-medium">{{ request.userName }}</p>
+                  </td>
+                  <td class="py-4 px-4">
+                    <p class="text-white font-medium">{{ request.courseTitle }}</p>
+                  </td>
+                  <td class="py-4 px-4 text-white">{{ formatDate(request.requestedAt) }}</td>
+                  <td class="py-4 px-4">
+                    <span [class]="getStatusColor(request.status) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                      <i [class]="getStatusIcon(request.status)" class="mr-1"></i>
+                      {{ request.status }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div class="flex space-x-2">
+                      <button *ngIf="request.status === 'PENDING'" (click)="approveRequest(request)" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-check mr-1"></i>Approve
+                      </button>
+                      <button *ngIf="request.status === 'PENDING'" (click)="rejectRequest(request)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                        <i class="fas fa-times mr-1"></i>Reject
+                      </button>
+                      <span *ngIf="request.status !== 'PENDING'" class="text-blue-300 text-sm">
+                        {{ request.approvedBy ? 'By ' + request.approvedBy : '' }}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verify Tab -->
+    <div *ngIf="!loading && selectedTab === 'verify'">
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-blue-900 rounded-lg border border-blue-800 p-8">
+          <h2 class="text-2xl font-bold text-white mb-6 text-center">Verify Certificate</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-blue-300 text-sm font-medium mb-2">Certificate Number</label>
+              <input 
+                type="text" 
+                [(ngModel)]="verificationNumber"
+                placeholder="Enter certificate number (e.g., CERT-2024-001)"
+                class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+              >
+            </div>
+            <button (click)="verifyCertificate()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg transition-colors">
+              <i class="fas fa-search mr-2"></i>Verify Certificate
+            </button>
+          </div>
+          <div class="mt-6 text-center">
+            <p class="text-blue-300 text-sm">
+              Enter a certificate number to verify its authenticity and view details
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

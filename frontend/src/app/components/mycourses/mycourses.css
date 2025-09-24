@@ -1,0 +1,451 @@
+/* My Courses Component Styles */
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Course card hover effects */
+.course-card {
+  transition: all 0.3s ease-in-out;
+  position: relative;
+}
+
+.course-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.course-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 0.5rem;
+  pointer-events: none;
+}
+
+.course-card:hover::before {
+  opacity: 1;
+}
+
+/* Course image placeholder */
+.course-image-placeholder {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  position: relative;
+  overflow: hidden;
+}
+
+.course-image-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Status badge animations */
+.status-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Star rating styles */
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+}
+
+.star-rating i {
+  margin-right: 1px;
+}
+
+/* Progress bar animations */
+.progress-bar {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Button hover effects */
+.btn-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Tab indicator animation */
+.tab-indicator {
+  position: relative;
+}
+
+.tab-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #3b82f6;
+  transition: width 0.3s ease-in-out;
+}
+
+.tab-indicator.active::after {
+  width: 100%;
+}
+
+/* Loading animation */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fade in animation */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Course grid responsive */
+@media (max-width: 768px) {
+  .course-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .course-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .course-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Progress status colors */
+.progress-not-started {
+  color: #6b7280;
+}
+
+.progress-in-progress {
+  color: #f59e0b;
+}
+
+.progress-completed {
+  color: #10b981;
+}
+
+/* Progress bar colors */
+.progress-bar-not-started {
+  background: #6b7280;
+}
+
+.progress-bar-in-progress {
+  background: #f59e0b;
+}
+
+.progress-bar-completed {
+  background: #10b981;
+}
+
+/* Enrollment status colors */
+.enrollment-status-approved {
+  color: #10b981;
+}
+
+.enrollment-status-pending {
+  color: #f59e0b;
+}
+
+.enrollment-status-rejected {
+  color: #ef4444;
+}
+
+.enrollment-status-waitlisted {
+  color: #8b5cf6;
+}
+
+/* Course level badges */
+.level-beginner {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.level-intermediate {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.level-advanced {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+/* In progress badge animation */
+.in-progress-badge {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  animation: progressPulse 2s infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Favorite button animation */
+.favorite-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.favorite-button:hover {
+  transform: scale(1.1);
+}
+
+.favorite-button.active {
+  animation: heartBeat 0.6s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Certificate button glow */
+.certificate-button {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  animation: certificateGlow 2s infinite;
+}
+
+@keyframes certificateGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+  }
+}
+
+/* Study streak animation */
+.study-streak {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  animation: streakPulse 1.5s infinite;
+}
+
+@keyframes streakPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Form input focus effects */
+.form-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+}
+
+/* Accessibility improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus visible styles */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .course-card {
+    border: 2px solid #ffffff;
+  }
+  
+  .status-badge {
+    border: 1px solid #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .course-card,
+  .status-badge,
+  .btn-hover,
+  .progress-bar {
+    transition: none;
+  }
+  
+  .loading-spinner {
+    animation: none;
+  }
+  
+  .fade-in {
+    animation: none;
+  }
+  
+  .in-progress-badge,
+  .favorite-button,
+  .certificate-button,
+  .study-streak {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .course-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e3a8a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Section transitions */
+.section-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.section-transition:hover {
+  transform: translateY(-2px);
+}
+
+/* Continue learning highlight */
+.continue-learning {
+  background: linear-gradient(135deg, #10b981, #059669);
+  position: relative;
+  overflow: hidden;
+}
+
+.continue-learning::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: continueShimmer 3s infinite;
+}
+
+@keyframes continueShimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Time remaining countdown */
+.time-remaining {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  animation: countdownPulse 1s infinite;
+}
+
+@keyframes countdownPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Next class indicator */
+.next-class {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  position: relative;
+}
+
+.next-class::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid white;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+} 

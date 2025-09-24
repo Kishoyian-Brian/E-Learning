@@ -1,0 +1,59 @@
+### Category & Difficulty Admin Management REST Client
+
+@baseUrl = http://localhost:3000/api/v1
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MmFkYTJjYS00MGQzLTRhZGEtYjFmZS0zYTQ5OTE1MmEwZGUiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxNjEzNjIyLCJleHAiOjE3NTE2MTQ1MjJ9.c9a1F5BQkZD8rWgAezcijERPT5D02Ji3sHRYdQd27YE
+@categoryId = 8f785029-d40d-4381-8521-512d7b9e1d9f
+@difficultyId = f02f4fe3-2b50-4edd-bc90-cd88e8e2e1d4
+
+
+### List All Categories
+GET {{baseUrl}}/categories
+Authorization: Bearer {{adminToken}}
+
+### Create Category
+POST {{baseUrl}}/categories
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "New Category"
+}
+
+### Update Category
+PATCH {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Category Name"
+}
+
+### Delete Category
+DELETE {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+
+### List All Difficulties
+GET {{baseUrl}}/difficulties
+Authorization: Bearer {{adminToken}}
+
+### Create Difficulty
+POST {{baseUrl}}/difficulties
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "New Difficulty"
+}
+
+### Update Difficulty
+PATCH {{baseUrl}}/difficulties/{{difficultyId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Difficulty Name"
+}
+
+### Delete Difficulty
+DELETE {{baseUrl}}/difficulties/{{difficultyId}}
+Authorization: Bearer {{adminToken}} 

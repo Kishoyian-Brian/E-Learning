@@ -1,0 +1,149 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Verification Section -->
+  <section class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+      <!-- Header -->
+      <div class="text-center">
+        <div class="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-envelope-open text-2xl text-white"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-2">Verify Your Email</h2>
+        <p class="text-blue-300">Enter the verification code sent to your email address</p>
+      </div>
+
+      <!-- Verification Form -->
+      <div class="bg-blue-900 rounded-lg border border-blue-800 p-8">
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="mb-6 p-4 rounded-lg border bg-green-900 border-green-700">
+          <div class="flex items-center">
+            <i class="fas fa-check-circle text-green-400 mr-3"></i>
+            <span class="text-green-300">{{ successMessage }}</span>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="mb-6 p-4 rounded-lg border bg-red-900 border-red-700">
+          <div class="flex items-center">
+            <i class="fas fa-exclamation-circle text-red-400 mr-3"></i>
+            <span class="text-red-300">{{ errorMessage }}</span>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onVerifySubmit()" class="space-y-6">
+          <!-- Email Field -->
+          <div>
+            <label for="email" class="block text-blue-300 text-sm font-medium mb-2">
+              Email Address *
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-envelope text-blue-400"></i>
+              </div>
+              <input 
+                type="email" 
+                id="email"
+                [(ngModel)]="email"
+                name="email"
+                class="w-full bg-blue-800 text-white pl-10 pr-4 py-3 rounded-lg border border-blue-700 focus:border-blue-500 focus:outline-none transition-colors"
+                placeholder="Enter your email address"
+                required
+                [readonly]="!!email"
+              >
+            </div>
+          </div>
+
+          <!-- Verification Code Field -->
+          <div>
+            <label for="verificationCode" class="block text-blue-300 text-sm font-medium mb-2">
+              Verification Code *
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-key text-blue-400"></i>
+              </div>
+              <input 
+                type="text" 
+                id="verificationCode"
+                [(ngModel)]="verificationCode"
+                name="verificationCode"
+                class="w-full bg-blue-800 text-white pl-10 pr-4 py-3 rounded-lg border border-blue-700 focus:border-blue-500 focus:outline-none transition-colors text-center text-lg font-mono tracking-widest"
+                placeholder="Enter 6-digit code"
+                maxlength="6"
+                required
+              >
+            </div>
+            <p class="mt-2 text-sm text-blue-300">
+              Enter the 6-digit code sent to your email
+            </p>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit"
+            [disabled]="loading || !email || !verificationCode"
+            [class]="loading || !email || !verificationCode ? 'bg-blue-600 opacity-50 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'"
+            class="w-full text-white py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-900"
+          >
+            <i *ngIf="loading" class="fas fa-spinner fa-spin mr-2"></i>
+            <i *ngIf="!loading" class="fas fa-check mr-2"></i>
+            {{ loading ? 'Verifying...' : 'Verify Email' }}
+          </button>
+        </form>
+
+        <!-- Resend Code Section -->
+        <div class="mt-6 pt-6 border-t border-blue-700">
+          <div class="text-center">
+            <p class="text-sm text-blue-300 mb-4">
+              Didn't receive the code?
+            </p>
+            <button 
+              (click)="resendVerificationEmail()"
+              [disabled]="!canResend || isResendLoading"
+              [class]="!canResend || isResendLoading ? 'text-blue-400 cursor-not-allowed' : 'text-blue-400 hover:text-white'"
+              class="text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-900 rounded"
+            >
+              <i *ngIf="isResendLoading" class="fas fa-spinner fa-spin mr-1"></i>
+              {{ countdownText }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="mt-6 pt-6 border-t border-blue-700">
+          <div class="flex justify-between text-sm">
+            <button 
+              (click)="goToLogin()"
+              class="text-blue-400 hover:text-white font-medium transition-colors"
+            >
+              <i class="fas fa-arrow-left mr-1"></i>
+              Back to Login
+            </button>
+            <button 
+              (click)="goToRegister()"
+              class="text-blue-400 hover:text-white font-medium transition-colors"
+            >
+              Create New Account
+              <i class="fas fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help Section -->
+      <div class="text-center">
+        <div class="bg-blue-800 border border-blue-700 rounded-lg p-4">
+          <h3 class="text-sm font-medium text-blue-300 mb-2">
+            <i class="fas fa-info-circle mr-1"></i>
+            Need Help?
+          </h3>
+          <p class="text-sm text-blue-300">
+            Check your spam folder or contact support if you're having trouble receiving the verification code.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div> 

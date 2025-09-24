@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Welcome to {{courseName}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to {{courseName}}!</h1>
+        <p>You're now enrolled and ready to start learning</p>
+    </div>
+    
+    <div class="content">
+        <h2>Hello {{studentName}},</h2>
+        
+        <p>Congratulations! You've successfully enrolled in <strong>{{courseName}}</strong>.</p>
+        
+        <p>Your course instructor is <strong>{{instructorName}}</strong>, who will guide you through this learning journey.</p>
+        
+        <h3>What's next?</h3>
+        <ul>
+            <li>Access your course materials</li>
+            <li>Complete modules at your own pace</li>
+            <li>Participate in discussions</li>
+            <li>Take quizzes to test your knowledge</li>
+            <li>Earn your certificate upon completion</li>
+        </ul>
+        
+        <p><strong>Enrollment Date:</strong> {{enrollmentDate}}</p>
+        
+        <div style="text-align: center;">
+            <a href="#" class="button">Start Learning Now</a>
+        </div>
+        
+        <p>If you have any questions, feel free to reach out to your instructor or use the discussion forums.</p>
+        
+        <p>Happy learning!</p>
+        
+        <p>Best regards,<br>
+        The E-Learning Platform Team</p>
+    </div>
+    
+    <div class="footer">
+        <p>This email was sent to you because you enrolled in a course on our platform.</p>
+        <p>© 2025 E-Learning Platform. All rights reserved.</p>
+    </div>
+</body>
+</html> 

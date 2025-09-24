@@ -1,0 +1,63 @@
+### Progress Tracking API Tests
+
+# Variables
+@baseUrl = http://localhost:3000
+@authToken =  {{login.response.body.access_token}}
+
+### Login to get token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "password123"
+}
+
+### Create Progress Record
+POST {{baseUrl}}/progress
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "enrollmentId": "enrollment-id-here",
+  "moduleId": "module-id-here",
+  "completed": false
+}
+
+### Get My Progress
+GET {{baseUrl}}/progress/my-progress
+Authorization: Bearer {{authToken}}
+
+### Get Progress by Enrollment
+GET {{baseUrl}}/progress/enrollment/enrollment-id-here
+Authorization: Bearer {{authToken}}
+
+### Get Course Progress (Detailed)
+GET {{baseUrl}}/progress/course/enrollment-id-here
+Authorization: Bearer {{authToken}}
+
+### Get User Overall Progress
+GET {{baseUrl}}/progress/overall
+Authorization: Bearer {{authToken}}
+
+### Get Specific Progress Record
+GET {{baseUrl}}/progress/progress-id-here
+Authorization: Bearer {{authToken}}
+
+### Update Progress Record
+PATCH {{baseUrl}}/progress/progress-id-here
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "completed": true
+}
+
+### Mark Module as Completed
+POST {{baseUrl}}/progress/mark-completed/enrollment-id-here/module-id-here
+Authorization: Bearer {{authToken}}
+
+### Admin: Get All Progress (Admin only)
+GET {{baseUrl}}/progress
+Authorization: Bearer {{authToken}} 

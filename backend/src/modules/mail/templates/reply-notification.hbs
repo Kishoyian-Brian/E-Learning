@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>New Reply: {{discussionTitle}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .reply-box {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #17a2b8;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>New Reply</h1>
+        <p>{{courseName}}</p>
+    </div>
+    
+    <div class="content">
+        <h2>Hello {{recipientName}},</h2>
+        
+        <p>A new reply has been added to the discussion <strong>{{discussionTitle}}</strong> in your course <strong>{{courseName}}</strong>.</p>
+        
+        <div class="reply-box">
+            <h3>{{discussionTitle}}</h3>
+            <p><strong>Replied by:</strong> {{authorName}}</p>
+            <p><strong>Date:</strong> {{notificationDate}}</p>
+        </div>
+        
+        <p>Join the conversation and continue the discussion!</p>
+        
+        <div style="text-align: center;">
+            <a href="{{discussionUrl}}" class="button">View Reply</a>
+        </div>
+        
+        <p>Stay engaged with your learning community by participating in discussions.</p>
+        
+        <p>Best regards,<br>
+        The E-Learning Platform Team</p>
+    </div>
+    
+    <div class="footer">
+        <p>This email was sent to you because you're enrolled in this course.</p>
+        <p>© 2025 E-Learning Platform. All rights reserved.</p>
+    </div>
+</body>
+</html> 

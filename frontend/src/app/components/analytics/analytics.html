@@ -1,0 +1,285 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Header -->
+  <header class="bg-primary border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-white">Analytics Dashboard</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <select 
+            (change)="changePeriod($any($event.target).value)" 
+            class="bg-blue-800 text-white px-3 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="365">Last year</option>
+          </select>
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-download mr-2"></i>Export Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="bg-blue-900 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <button 
+          (click)="switchTab('dashboard')"
+          [class]="selectedTab === 'dashboard' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-chart-line mr-2"></i>Overview
+        </button>
+        <button 
+          (click)="switchTab('courses')"
+          [class]="selectedTab === 'courses' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-book mr-2"></i>Course Analytics
+        </button>
+        <button 
+          (click)="switchTab('engagement')"
+          [class]="selectedTab === 'engagement' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-users mr-2"></i>Engagement
+        </button>
+        <!-- Removed revenue tab -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Dashboard Overview Tab -->
+    <div *ngIf="!loading && selectedTab === 'dashboard'">
+      <!-- Key Metrics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Removed Total Revenue card -->
+        <!-- Total Students -->
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-600">
+              <i class="fas fa-users text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Total Students</p>
+              <p class="text-2xl font-bold text-white">{{ dashboardData?.totalStudents || 0 }}</p>
+              <p class="text-blue-400 text-sm">Active learners</p>
+            </div>
+          </div>
+        </div>
+        <!-- Total Courses -->
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-600">
+              <i class="fas fa-book text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Total Courses</p>
+              <p class="text-2xl font-bold text-white">{{ dashboardData?.totalCourses || 0 }}</p>
+              <p class="text-purple-400 text-sm">Published courses</p>
+            </div>
+          </div>
+        </div>
+        <!-- Completion Rate -->
+        <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-600">
+              <i class="fas fa-chart-pie text-white text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-300 text-sm font-medium">Completion Rate</p>
+              <p [class]="getCompletionRateColor(dashboardData?.averageCompletionRate || 0)" class="text-2xl font-bold">
+                {{ formatPercentage(dashboardData?.averageCompletionRate || 0) }}
+              </p>
+              <p class="text-yellow-400 text-sm">Average across courses</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts and Tables Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Top Performing Courses -->
+        <div class="bg-blue-900 rounded-lg border border-blue-800">
+          <div class="px-6 py-4 border-b border-blue-800">
+            <h2 class="text-xl font-semibold text-white">Top Performing Courses</h2>
+          </div>
+          <div class="p-6">
+            <div *ngFor="let course of getTopPerformingCourses()" class="mb-4 last:mb-0">
+              <div class="bg-blue-800 rounded-lg p-4 border border-blue-700">
+                <div class="flex justify-between items-start mb-2">
+                  <h3 class="text-lg font-semibold text-white">{{ course.courseTitle }}</h3>
+                  <!-- Removed revenue -->
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p class="text-blue-300">Enrollments</p>
+                    <p class="text-white font-semibold">{{ course.totalEnrollments }}</p>
+                  </div>
+                  <div>
+                    <p class="text-blue-300">Completion Rate</p>
+                    <p [class]="getCompletionRateColor(course.completionRate)" class="font-semibold">
+                      {{ formatPercentage(course.completionRate) }}
+                    </p>
+                  </div>
+                  <!-- Removed rating -->
+                  <div>
+                    <p class="text-blue-300">Active Students</p>
+                    <p class="text-white font-semibold">{{ course.activeStudents }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-blue-900 rounded-lg border border-blue-800">
+          <div class="px-6 py-4 border-b border-blue-800">
+            <h2 class="text-xl font-semibold text-white">Recent Activity</h2>
+          </div>
+          <div class="p-6">
+            <div *ngFor="let activity of getRecentActivity()" class="mb-4 last:mb-0">
+              <div class="flex items-center justify-between p-3 bg-blue-800 rounded-lg border border-blue-700">
+                <div>
+                  <p class="text-white font-medium">{{ activity.date }}</p>
+                  <p class="text-blue-300 text-sm">{{ activity.activeUsers }} active users</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-white font-semibold">{{ activity.courseViews }} views</p>
+                  <p class="text-blue-300 text-sm">{{ activity.timeSpent }} min avg</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Analytics Tab -->
+    <div *ngIf="!loading && selectedTab === 'courses'">
+      <div class="bg-blue-900 rounded-lg border border-blue-800">
+        <div class="px-6 py-4 border-b border-blue-800">
+          <h2 class="text-xl font-semibold text-white">Course Performance Analytics</h2>
+        </div>
+        <div class="p-6">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-blue-700">
+                  <th class="py-3 px-4 text-blue-300 font-medium">Course</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Enrollments</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Completion Rate</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Rating</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Revenue</th>
+                  <th class="py-3 px-4 text-blue-300 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let course of courseAnalytics" class="border-b border-blue-800 hover:bg-blue-800">
+                  <td class="py-4 px-4">
+                    <div>
+                      <p class="text-white font-medium">{{ course.courseTitle }}</p>
+                      <p class="text-blue-400 text-sm">ID: {{ course.courseId }}</p>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4 text-white">{{ course.totalEnrollments }}</td>
+                  <td class="py-4 px-4">
+                    <span [class]="getCompletionRateColor(course.completionRate)">
+                      {{ formatPercentage(course.completionRate) }}
+                    </span>
+                  </td>
+                  <!-- <td class="py-4 px-4">
+                    <div class="flex items-center">
+                      <span *ngFor="let star of getRatingStars(course.averageRating)" 
+                            [class]="star + ' text-yellow-400 text-xs'"></span>
+                      <span class="text-white ml-1">{{ course.averageRating }}</span>
+                    </div>
+                  </td> -->
+                  <!-- <td class="py-4 px-4 text-green-400 font-semibold">{{ formatCurrency(course.totalRevenue) }}</td> -->
+                  <td class="py-4 px-4">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                      <i class="fas fa-eye mr-1"></i>View Details
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engagement Tab -->
+    <div *ngIf="!loading && selectedTab === 'engagement'">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- User Engagement Chart -->
+        <div class="bg-blue-900 rounded-lg border border-blue-800">
+          <div class="px-6 py-4 border-b border-blue-800">
+            <h2 class="text-xl font-semibold text-white">User Engagement</h2>
+          </div>
+          <div class="p-6">
+            <div *ngFor="let activity of engagementData" class="mb-4 last:mb-0">
+              <div class="bg-blue-800 rounded-lg p-4 border border-blue-700">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-white font-medium">{{ activity.date }}</span>
+                  <span class="text-blue-300 text-sm">{{ activity.activeUsers }} users</span>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <p class="text-blue-300">Course Views</p>
+                    <p class="text-white font-semibold">{{ activity.courseViews }}</p>
+                  </div>
+                  <div>
+                    <p class="text-blue-300">Time Spent</p>
+                    <p class="text-white font-semibold">{{ activity.timeSpent }} min</p>
+                  </div>
+                  <div>
+                    <p class="text-blue-300">Quiz Attempts</p>
+                    <p class="text-white font-semibold">{{ activity.quizAttempts }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Engagement Metrics -->
+        <div class="bg-blue-900 rounded-lg border border-blue-800">
+          <div class="px-6 py-4 border-b border-blue-800">
+            <h2 class="text-xl font-semibold text-white">Engagement Metrics</h2>
+          </div>
+          <div class="p-6 space-y-6">
+            <div class="text-center">
+              <p class="text-3xl font-bold text-white">{{ getDailyActiveUsers() }}</p>
+              <p class="text-blue-300">Daily Active Users</p>
+            </div>
+            <div class="text-center">
+              <p class="text-3xl font-bold text-white">{{ getDailyCourseViews() }}</p>
+              <p class="text-blue-300">Daily Course Views</p>
+            </div>
+            <div class="text-center">
+              <p class="text-3xl font-bold text-white">{{ getAverageSessionTime() }} min</p>
+              <p class="text-blue-300">Average Session Time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Tab -->
+    <!-- Removed Revenue Tab -->
+  </main>
+</div>

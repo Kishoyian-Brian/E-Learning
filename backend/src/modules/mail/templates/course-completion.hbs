@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Course Completion: {{courseName}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .achievement-box {
+            background: white;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 Congratulations!</h1>
+        <p>You've successfully completed {{courseName}}</p>
+    </div>
+    
+    <div class="content">
+        <h2>Hello {{studentName}},</h2>
+        
+        <div class="achievement-box">
+            <h3>🏆 Course Completed!</h3>
+            <p>You have successfully completed <strong>{{courseName}}</strong></p>
+            <p><strong>Completion Date:</strong> {{completionDate}}</p>
+            <p><strong>Instructor:</strong> {{instructorName}}</p>
+        </div>
+        
+        <h3>What you've accomplished:</h3>
+        <ul>
+            <li>Completed all course modules</li>
+            <li>Passed all required quizzes</li>
+            <li>Demonstrated mastery of the course content</li>
+            <li>Earned your certificate of completion</li>
+        </ul>
+        
+        <p>Your certificate has been generated and is available for download. You can also share your achievement on social media!</p>
+        
+        <div style="text-align: center;">
+            <a href="#" class="button">Download Certificate</a>
+        </div>
+        
+        <h3>What's next?</h3>
+        <ul>
+            <li>Explore more courses in our platform</li>
+            <li>Share your certificate on LinkedIn</li>
+            <li>Join our community discussions</li>
+            <li>Consider advanced courses in the same subject</li>
+        </ul>
+        
+        <p>Keep up the great work and continue your learning journey!</p>
+        
+        <p>Best regards,<br>
+        The E-Learning Platform Team</p>
+    </div>
+    
+    <div class="footer">
+        <p>This email was sent to you because you completed a course on our platform.</p>
+        <p>© 2025 E-Learning Platform. All rights reserved.</p>
+    </div>
+</body>
+</html> 

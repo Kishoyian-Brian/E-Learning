@@ -1,0 +1,239 @@
+/* Analytics Component Styles */
+
+/* Tab Navigation */
+.nav-tab {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-tab:hover {
+  transform: translateY(-1px);
+}
+
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 1px;
+}
+
+/* Metric Cards */
+.metric-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.metric-card:hover::before {
+  left: 100%;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Table Styles */
+.analytics-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.analytics-table th {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.analytics-table tr {
+  transition: all 0.2s ease;
+}
+
+.analytics-table tr:hover {
+  background: rgba(59, 130, 246, 0.1);
+  transform: scale(1.01);
+}
+
+/* Progress Bars */
+.progress-bar {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  height: 4px;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Star Ratings */
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+}
+
+.star-rating .fas.fa-star,
+.star-rating .fas.fa-star-half-alt {
+  color: #fbbf24;
+  text-shadow: 0 0 2px rgba(251, 191, 36, 0.5);
+}
+
+.star-rating .far.fa-star {
+  color: #6b7280;
+}
+
+/* Growth Indicators */
+.growth-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.growth-positive {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.growth-negative {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* Chart Containers */
+.chart-container {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  border: 1px solid #3b82f6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+/* Loading Animation */
+.loading-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .metric-card {
+    margin-bottom: 1rem;
+  }
+  
+  .analytics-table {
+    font-size: 0.875rem;
+  }
+  
+  .chart-container {
+    padding: 1rem;
+  }
+}
+
+/* Custom Scrollbar for Tables */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #1e3a8a;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+}
+
+/* Hover Effects for Interactive Elements */
+.interactive-element {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.interactive-element:hover {
+  transform: scale(1.05);
+}
+
+/* Data Visualization Enhancements */
+.data-point {
+  position: relative;
+}
+
+.data-point::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid currentColor;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.data-point:hover::after {
+  opacity: 1;
+}
+
+/* Export Button Enhancement */
+.export-btn {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.export-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.export-btn:hover::before {
+  left: 100%;
+}
+
+.export-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+

@@ -1,0 +1,98 @@
+@student_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiMmFjOWI5ZC02OTJhLTRmNDctYThmMi1lOTUzNmZkM2YxMTQiLCJlbWFpbCI6Im1heG1pbGxpYW5tdWlydXJpQGdtYWlsLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzUxNTkyOTk2LCJleHAiOjE3NTE1OTM4OTZ9.aVtu6sxQTz-Wa6mkcveCeWpYnBBBKMNeYVDR8b71i8o
+@instructor_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzUwNTdmNy0wZmE3LTRmMDgtOTY0Yy1jMjI1YjY5N2UzNjQiLCJlbWFpbCI6Imluc3RydWN0b3JAZXhhbXBsZS5jb20iLCJyb2xlIjoiSU5TVFJVQ1RPUiIsImlhdCI6MTc1MTU5MzA2NCwiZXhwIjoxNzUxNTkzOTY0fQ.ikDF7yCawNuSlZKnc0QmxQlewPEJ-v3N1CzzOIYJJzU
+
+### Register devmaxmillian (student)
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "devmaxmillianmuiruri@gmail.com",
+  "password": "password123",
+  "name": "Max Millian",
+  "role": "STUDENT"
+}
+
+### Register maxmillian (student)
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "maxmillianmuiruri@gmail.com",
+  "password": "password123",
+  "name": "Maxmillian",
+  "role": "STUDENT"
+}
+
+### Register admin
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "adminpass",
+  "name": "Admin User",
+  "role": "ADMIN"
+}
+
+### verify admin
+POST http://localhost:3000/api/v1/auth/verify-email
+Content-Type: application/json
+{
+  "email": "admin@example.com",
+  "code": "878291"
+}
+
+### Verify devmaxmillian (replace code with actual code)
+POST http://localhost:3000/api/v1/auth/verify-email
+Content-Type: application/json
+
+{
+  "email": "devmaxmillianmuiruri@gmail.com",
+  "code": "571996"
+}
+
+### Verify maxmillian (replace code with actual code)
+POST http://localhost:3000/api/v1/auth/verify-email
+Content-Type: application/json
+
+{
+  "email": "maxmillianmuiruri@gmail.com",
+  "code": "407054"
+}
+
+### Login devmaxmillian
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "devmaxmillianmuiruri@gmail.com",
+  "password": "password123"
+}
+
+### Login maxmillian
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "maxmillianmuiruri@gmail.com",
+  "password": "password123"
+}
+
+### Login instructor
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "instructor@example.com",
+  "password": "password123"
+}
+
+### Login admin
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "adminpass"
+} 
+

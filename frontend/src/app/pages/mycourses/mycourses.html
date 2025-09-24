@@ -1,0 +1,344 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Navigation Tabs -->
+  <nav class="bg-blue-900 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <button 
+          (click)="switchTab('all-courses')"
+          [class]="selectedTab === 'all-courses' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-th-large mr-2"></i>All Courses
+        </button>
+        <button 
+          (click)="switchTab('in-progress')"
+          [class]="selectedTab === 'in-progress' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-play mr-2"></i>In Progress
+        </button>
+        <button 
+          (click)="switchTab('completed')"
+          [class]="selectedTab === 'completed' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-check-circle mr-2"></i>Completed
+        </button>
+        <button 
+          (click)="switchTab('favorites')"
+          [class]="selectedTab === 'favorites' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-heart mr-2"></i>Favorites
+        </button>
+        <button 
+          (click)="switchTab('recent')"
+          [class]="selectedTab === 'recent' ? 'border-b-2 border-blue-500 text-blue-300' : 'text-blue-400 hover:text-blue-300'"
+          class="py-4 px-1 font-medium transition-colors"
+        >
+          <i class="fas fa-clock mr-2"></i>Recent
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Progress Overview -->
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-blue-600">
+            <i class="fas fa-book text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-blue-300 text-sm font-medium">Total Courses</p>
+            <p class="text-2xl font-bold text-white">{{ getTotalCourses() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-yellow-600">
+            <i class="fas fa-play text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-blue-300 text-sm font-medium">In Progress</p>
+            <p class="text-2xl font-bold text-white">{{ getInProgressCoursesCount() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-green-600">
+            <i class="fas fa-check-circle text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-blue-300 text-sm font-medium">Completed</p>
+            <p class="text-2xl font-bold text-white">{{ getCompletedCoursesCount() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-blue-900 rounded-lg p-6 border border-blue-800">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-purple-600">
+            <i class="fas fa-clock text-white text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <p class="text-blue-300 text-sm font-medium">Study Time</p>
+            <p class="text-2xl font-bold text-white">{{ formatStudyTime(getTotalStudyTime()) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Progress -->
+    <div class="bg-blue-900 rounded-lg p-6 border border-blue-800 mb-8">
+      <h2 class="text-xl font-semibold text-white mb-4">Overall Progress</h2>
+      <div class="flex items-center">
+        <div class="flex-1 mr-4">
+          <div class="flex justify-between text-sm mb-2">
+            <span class="text-blue-300">Overall Completion</span>
+            <span [class]="getProgressColor(getTotalProgress())">{{ getTotalProgress() }}%</span>
+          </div>
+          <div class="w-full bg-blue-700 rounded-full h-3">
+            <div [class]="getProgressBarColor(getTotalProgress()) + ' h-3 rounded-full'" [style.width.%]="getTotalProgress()"></div>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-blue-300 text-sm">{{ getCompletedCoursesCount() }} of {{ getTotalCourses() }} courses completed</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-blue-900 rounded-lg p-6 border border-blue-800 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm"
+            placeholder="Search your courses..."
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+        </div>
+        <div class="md:w-48">
+          <select 
+            [(ngModel)]="selectedProgress"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="all">All Progress</option>
+            <option value="not-started">Not Started</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="md:w-48">
+          <select 
+            [(ngModel)]="selectedStatus"
+            class="w-full bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700 focus:outline-none focus:border-blue-500"
+          >
+            <option value="all">All Status</option>
+            <option value="APPROVED">Approved</option>
+            <option value="PENDING">Pending</option>
+            <option value="WAITLISTED">Waitlisted</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue Learning Section -->
+    <div *ngIf="selectedTab === 'in-progress' && getInProgressCourses().length > 0" class="mb-8">
+      <h2 class="text-2xl font-bold text-white mb-6">Continue Learning</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let course of getInProgressCourses()" class="bg-blue-900 rounded-lg border border-blue-800 overflow-hidden hover:shadow-lg transition-all duration-300">
+          <!-- Course Image -->
+          <div class="relative h-48 bg-gradient-to-br from-blue-600 to-blue-800">
+            <div class="w-full h-full flex items-center justify-center">
+              <i class="fas fa-graduation-cap text-6xl text-white opacity-50"></i>
+            </div>
+            <div class="absolute top-4 left-4">
+              <span class="bg-yellow-500 text-yellow-900 px-2 py-1 rounded-full text-xs font-medium">
+                <i class="fas fa-play mr-1"></i>In Progress
+              </span>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span [class]="getDifficultyColor(course.difficulty.name) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                {{ course.difficulty.name }}
+              </span>
+            </div>
+            <div class="absolute bottom-4 left-4">
+              <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-medium">
+                {{ getEnrollmentByCourseId(course.id)?.progress }}% Complete
+              </span>
+            </div>
+          </div>
+
+          <!-- Course Content -->
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-white mb-2 line-clamp-2">{{ course.title }}</h3>
+            <p class="text-blue-300 text-sm mb-4 line-clamp-2">{{ course.description }}</p>
+            
+            <div class="mb-4">
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-blue-300">Progress</span>
+                <span [class]="getProgressColor(getEnrollmentByCourseId(course.id)?.progress || 0)">
+                  {{ getEnrollmentByCourseId(course.id)?.progress || 0 }}%
+                </span>
+              </div>
+              <div class="w-full bg-blue-700 rounded-full h-2">
+                <div [class]="getProgressBarColor(getEnrollmentByCourseId(course.id)?.progress || 0) + ' h-2 rounded-full'" 
+                     [style.width.%]="getEnrollmentByCourseId(course.id)?.progress || 0"></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center text-blue-300 text-sm">
+                <i class="fas fa-user mr-1"></i>
+                <span>{{ course.instructor.name }}</span>
+              </div>
+              <div class="flex items-center text-blue-300 text-sm">
+                <i class="fas fa-calendar mr-1"></i>
+                <span>{{ formatDate(course.createdAt) }}</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-2">
+              <button (click)="continueCourse(course)" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                <i class="fas fa-play mr-1"></i>Continue
+              </button>
+              <button (click)="viewCourse(course)" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Courses Grid -->
+    <div *ngIf="!loading">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let course of getFilteredCourses()" class="bg-blue-900 rounded-lg border border-blue-800 overflow-hidden hover:shadow-lg transition-all duration-300">
+          <!-- Course Image -->
+          <div class="relative h-48 bg-gradient-to-br from-blue-600 to-blue-800">
+            <div class="w-full h-full flex items-center justify-center">
+              <i class="fas fa-graduation-cap text-6xl text-white opacity-50"></i>
+            </div>
+            <div class="absolute top-4 left-4">
+              <span [class]="getStatusColor(getEnrollmentByCourseId(course.id)?.status || '') + ' px-2 py-1 rounded-full text-xs font-medium'">
+                <i [class]="getStatusIcon(getEnrollmentByCourseId(course.id)?.status || '')" class="mr-1"></i>
+                {{ getEnrollmentByCourseId(course.id)?.status || 'Unknown' }}
+              </span>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span [class]="getDifficultyColor(course.difficulty.name) + ' px-2 py-1 rounded-full text-xs font-medium'">
+                {{ course.difficulty.name }}
+              </span>
+            </div>
+            <div class="absolute bottom-4 left-4">
+              <span [class]="getProgressColor(getEnrollmentByCourseId(course.id)?.progress || 0) + ' bg-opacity-90 px-2 py-1 rounded text-xs font-medium'">
+                {{ getProgressLabel(getEnrollmentByCourseId(course.id)?.progress || 0) }}
+              </span>
+            </div>
+            <div *ngIf="getEnrollmentByCourseId(course.id)?.isFavorite" class="absolute bottom-4 right-4">
+              <span class="bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
+                <i class="fas fa-heart"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Course Content -->
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-white mb-2 line-clamp-2">{{ course.title }}</h3>
+            <p class="text-blue-300 text-sm mb-4 line-clamp-3">{{ course.description }}</p>
+            
+            <div class="mb-4">
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-blue-300">Progress</span>
+                <span [class]="getProgressColor(getEnrollmentByCourseId(course.id)?.progress || 0)">
+                  {{ getEnrollmentByCourseId(course.id)?.progress || 0 }}%
+                </span>
+              </div>
+              <div class="w-full bg-blue-700 rounded-full h-2">
+                <div [class]="getProgressBarColor(getEnrollmentByCourseId(course.id)?.progress || 0) + ' h-2 rounded-full'" 
+                     [style.width.%]="getEnrollmentByCourseId(course.id)?.progress || 0"></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center text-blue-300 text-sm">
+                <i class="fas fa-user mr-1"></i>
+                <span>{{ course.instructor.name }}</span>
+              </div>
+              <div class="flex items-center text-blue-300 text-sm">
+                <i class="fas fa-calendar mr-1"></i>
+                <span>{{ formatDate(course.createdAt) }}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center text-blue-300 text-sm">
+                <i class="fas fa-book mr-1"></i>
+                <span>{{ course._count?.modules || 0 }} modules</span>
+              </div>
+              <div class="flex items-center text-blue-300 text-sm">
+                <i class="fas fa-users mr-1"></i>
+                <span>{{ course._count?.enrollments || 0 }} enrolled</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-2">
+              <button 
+                (click)="continueCourse(course)" 
+                [disabled]="getEnrollmentByCourseId(course.id)?.progress === 100"
+                [class]="getEnrollmentByCourseId(course.id)?.progress === 100 ? 'bg-gray-600 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'"
+                class="flex-1 text-white px-3 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-play mr-1"></i>
+                {{ getEnrollmentByCourseId(course.id)?.progress === 100 ? 'Completed' : 'Continue' }}
+              </button>
+              <button (click)="viewCourse(course)" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button 
+                (click)="markAsFavorite(course)" 
+                [class]="getEnrollmentByCourseId(course.id)?.isFavorite ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-600 hover:bg-gray-700'"
+                class="text-white px-3 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-heart"></i>
+              </button>
+              <button 
+                *ngIf="getEnrollmentByCourseId(course.id)?.certificateEarned"
+                (click)="downloadCertificate(course)" 
+                class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-certificate"></i>
+                Download Certificate
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="getFilteredCourses().length === 0" class="text-center py-16">
+        <div class="text-blue-300 text-6xl mb-4">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">No courses found</h3>
+        <p class="text-blue-300">Try adjusting your search criteria or browse our course catalog to enroll in new courses.</p>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,207 @@
+/* Certificate Component Styles */
+
+/* Custom scrollbar for tables */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #1e3a8a;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Hover effects for interactive elements */
+.hover\:bg-blue-800:hover {
+  background-color: #1e40af;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Animation for loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Status badge animations */
+.status-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Button hover effects */
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Table row hover effects */
+tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Input focus effects */
+input:focus, select:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Card hover effects */
+.bg-blue-900 {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.bg-blue-900:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Tab navigation active state */
+nav button {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+
+nav button:hover {
+  transform: translateY(-1px);
+}
+
+/* Certificate number styling */
+.font-mono {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .flex-col {
+    flex-direction: column;
+  }
+  
+  .space-x-2 > * + * {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Custom animations for certificate actions */
+.certificate-action {
+  opacity: 0.8;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.certificate-action:hover {
+  opacity: 1;
+}
+
+/* Template card styling */
+.template-card {
+  border: 1px solid #1e40af;
+  transition: all 0.3s ease-in-out;
+}
+
+.template-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+}
+
+/* Verification form styling */
+.verification-form {
+  backdrop-filter: blur(10px);
+  background: rgba(30, 58, 138, 0.95);
+}
+
+/* Stats card animations */
+.stats-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon animations */
+.fas {
+  transition: transform 0.2s ease-in-out;
+}
+
+button:hover .fas {
+  transform: scale(1.1);
+}
+
+/* Search input styling */
+.search-input {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  border: 1px solid #3b82f6;
+}
+
+.search-input:focus {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border-color: #60a5fa;
+}
+
+/* Status indicator pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-active {
+  animation: pulse 2s infinite;
+}
+
+/* Certificate expiry warning */
+.expiry-warning {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  animation: pulse 1.5s infinite;
+}
+
+.expiry-soon {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+
+/* Loading skeleton animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1e40af 25%, #3b82f6 50%, #1e40af 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+

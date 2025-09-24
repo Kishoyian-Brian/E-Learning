@@ -1,0 +1,125 @@
+### Login as student (replace with real credentials)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "devmaxmillianmuiruri@gmail.com",
+  "password": "password123"
+}
+
+### Login as instructor (replace with real credentials)
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "instructor@example.com",
+  "password": "password123"
+}
+
+### Create a discussion (student)
+POST http://localhost:3000/api/discussions
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "courseId": "{{course_id}}",
+  "title": "How do I solve this assignment?",
+  "content": "I'm stuck on question 3. Any tips?",
+  "category": "Q&A"
+}
+
+### List all discussions
+GET http://localhost:3000/api/discussions
+Authorization: Bearer {{student_token}}
+
+### List discussions for a course
+GET http://localhost:3000/api/discussions/course/{{course_id}}
+Authorization: Bearer {{student_token}}
+
+### Get a single discussion
+GET http://localhost:3000/api/discussions/{{discussion_id}}
+Authorization: Bearer {{student_token}}
+
+### Update a discussion (student)
+PATCH http://localhost:3000/api/discussions/{{discussion_id}}
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "title": "Updated title",
+  "content": "Updated content"
+}
+
+### Delete a discussion (student)
+DELETE http://localhost:3000/api/discussions/{{discussion_id}}
+Authorization: Bearer {{student_token}}
+
+### Create a reply (student)
+POST http://localhost:3000/api/discussions/{{discussion_id}}/replies
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "content": "Here is my reply!"
+}
+
+### Update a reply (student)
+PATCH http://localhost:3000/api/discussions/replies/{{reply_id}}
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "content": "Updated reply content"
+}
+
+### Delete a reply (student)
+DELETE http://localhost:3000/api/discussions/replies/{{reply_id}}
+Authorization: Bearer {{student_token}}
+
+### Upvote a discussion
+POST http://localhost:3000/api/discussions/{{discussion_id}}/vote
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "voteType": "UPVOTE"
+}
+
+### Downvote a discussion
+POST http://localhost:3000/api/discussions/{{discussion_id}}/vote
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "voteType": "DOWNVOTE"
+}
+
+### Upvote a reply
+POST http://localhost:3000/api/discussions/replies/{{reply_id}}/vote
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "voteType": "UPVOTE"
+}
+
+### Downvote a reply
+POST http://localhost:3000/api/discussions/replies/{{reply_id}}/vote
+Authorization: Bearer {{student_token}}
+Content-Type: application/json
+
+{
+  "voteType": "DOWNVOTE"
+}
+
+### Accept a reply (instructor only)
+POST http://localhost:3000/api/discussions/replies/{{reply_id}}/accept
+Authorization: Bearer {{instructor_token}}
+
+### Get discussion stats (all)
+GET http://localhost:3000/api/discussions/stats
+Authorization: Bearer {{student_token}}
+
+### Get discussion stats (by course)
+GET http://localhost:3000/api/discussions/stats?courseId={{course_id}}
+Authorization: Bearer {{student_token}} 

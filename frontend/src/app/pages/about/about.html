@@ -1,0 +1,221 @@
+<div class="min-h-screen bg-primary text-white">
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-blue-900 to-blue-800 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+          About EduSoma
+        </h1>
+        <p class="text-xl text-blue-200 mb-8 max-w-3xl mx-auto">
+          We're on a mission to democratize education and make quality learning accessible to everyone, everywhere.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button (click)="scrollToSection('mission')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+            <i class="fas fa-compass mr-2"></i>Our Mission
+          </button>
+          <button (click)="scrollToSection('team')" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+            <i class="fas fa-users mr-2"></i>Meet Our Team
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-16 bg-blue-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div *ngFor="let stat of stats" class="text-center">
+          <div class="bg-blue-800 rounded-lg p-6 border border-blue-700">
+            <div class="text-3xl md:text-4xl font-bold text-white mb-2">{{ stat.number }}</div>
+            <div class="text-blue-300 text-sm">{{ stat.label }}</div>
+            <div class="text-blue-500 text-2xl mt-2">
+              <i [class]="stat.icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section id="mission" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-3xl font-bold text-white mb-6">Our Mission</h2>
+          <p class="text-blue-300 text-lg mb-6 leading-relaxed">
+            At EduSoma, we believe that education is the foundation of progress and opportunity. 
+            Our mission is to break down barriers to learning and create a world where anyone, 
+            anywhere can access high-quality education that transforms their lives.
+          </p>
+          <p class="text-blue-300 text-lg mb-6 leading-relaxed">
+            We partner with world-class instructors and leverage cutting-edge technology to 
+            deliver engaging, interactive learning experiences that adapt to each student's 
+            unique needs and learning style.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+              <i class="fas fa-play mr-2"></i>Watch Our Story
+            </button>
+            <button class="bg-transparent border-2 border-blue-600 text-blue-300 hover:bg-blue-600 hover:text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+              <i class="fas fa-download mr-2"></i>Download Brochure
+            </button>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="bg-blue-800 rounded-lg p-8 border border-blue-700">
+            <h3 class="text-2xl font-bold text-white mb-4">What We Believe</h3>
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                <span class="text-blue-300">Education should be accessible to everyone, regardless of location or background</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                <span class="text-blue-300">Learning should be engaging, interactive, and personalized</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                <span class="text-blue-300">Technology can enhance and democratize education</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                <span class="text-blue-300">Community and collaboration are essential to learning</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="py-16 bg-blue-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-white mb-4">Our Values</h2>
+        <p class="text-blue-300 text-lg">The principles that guide everything we do</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div *ngFor="let value of values" class="bg-blue-800 rounded-lg p-6 border border-blue-700 text-center hover:shadow-lg transition-all duration-300">
+          <div [class]="value.color + ' text-4xl mb-4'">
+            <i [class]="value.icon"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-3">{{ value.title }}</h3>
+          <p class="text-blue-300 text-sm leading-relaxed">{{ value.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section id="team" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-white mb-4">Meet Our Team</h2>
+        <p class="text-blue-300 text-lg">The passionate people behind EduSoma</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div *ngFor="let member of team" class="bg-blue-900 rounded-lg border border-blue-800 overflow-hidden hover:shadow-lg transition-all duration-300">
+          <div class="p-6 text-center">
+            <img [src]="member.avatar" [alt]="member.name" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+            <h3 class="text-xl font-semibold text-white mb-1">{{ member.name }}</h3>
+            <p class="text-blue-400 text-sm mb-3">{{ member.role }}</p>
+            <p class="text-blue-300 text-sm mb-4 leading-relaxed">{{ member.bio }}</p>
+            
+            <div class="flex justify-center space-x-3">
+              <button 
+                (click)="openSocialLink(member.social.linkedin)"
+                class="text-blue-300 hover:text-white transition-colors"
+                title="LinkedIn"
+              >
+                <i class="fab fa-linkedin text-lg"></i>
+              </button>
+              <button 
+                (click)="openSocialLink(member.social.twitter)"
+                class="text-blue-300 hover:text-white transition-colors"
+                title="Twitter"
+              >
+                <i class="fab fa-twitter text-lg"></i>
+              </button>
+              <a 
+                [href]="'mailto:' + member.social.email"
+                class="text-blue-300 hover:text-white transition-colors"
+                title="Email"
+              >
+                <i class="fas fa-envelope text-lg"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="py-16 bg-blue-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-white mb-4">Our Journey</h2>
+        <p class="text-blue-300 text-lg">Key milestones in our growth and development</p>
+      </div>
+      
+      <div class="relative">
+        <!-- Timeline line -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 w-1 bg-blue-700 h-full"></div>
+        
+        <div class="space-y-12">
+          <div *ngFor="let milestone of milestones; let i = index" class="relative">
+            <div class="flex items-center">
+              <!-- Left side -->
+              <div [class]="i % 2 === 0 ? 'flex-1 pr-8 text-right' : 'flex-1 pl-8'">
+                <div [class]="i % 2 === 0 ? 'bg-blue-800 rounded-lg p-6 border border-blue-700' : 'hidden'">
+                  <div class="text-2xl font-bold text-yellow-500 mb-2">{{ milestone.year }}</div>
+                  <h3 class="text-xl font-semibold text-white mb-2">{{ milestone.title }}</h3>
+                  <p class="text-blue-300">{{ milestone.description }}</p>
+                </div>
+              </div>
+              
+              <!-- Center dot -->
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-blue-900"></div>
+              
+              <!-- Right side -->
+              <div [class]="i % 2 === 1 ? 'flex-1 pl-8' : 'flex-1 pr-8 text-right'">
+                <div [class]="i % 2 === 1 ? 'bg-blue-800 rounded-lg p-6 border border-blue-700' : 'hidden'">
+                  <div class="text-2xl font-bold text-yellow-500 mb-2">{{ milestone.year }}</div>
+                  <h3 class="text-xl font-semibold text-white mb-2">{{ milestone.title }}</h3>
+                  <p class="text-blue-300">{{ milestone.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold text-white mb-4">Join Our Mission</h2>
+      <p class="text-blue-300 text-lg mb-8 max-w-2xl mx-auto">
+        Ready to be part of the future of education? Whether you're a student, instructor, or partner, 
+        we'd love to hear from you.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button routerLink="/contact" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+          <i class="fas fa-envelope mr-2"></i>Get in Touch
+        </button>
+        <button routerLink="/courses" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+          <i class="fas fa-book mr-2"></i>Explore Courses
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div> 

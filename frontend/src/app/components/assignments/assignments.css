@@ -1,0 +1,392 @@
+/* Assignments Component Styles */
+
+/* Modal overlay */
+.fixed.inset-0 {
+  backdrop-filter: blur(4px);
+}
+
+/* Custom scrollbar for modals */
+.max-h-\[90vh\]::-webkit-scrollbar {
+  width: 8px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-track {
+  background: #1e3a8a;
+  border-radius: 4px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Timer animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.timer-warning {
+  animation: pulse 1s infinite;
+}
+
+/* Question navigation */
+.question-nav {
+  transition: all 0.2s ease-in-out;
+}
+
+.question-nav:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Answer selection */
+.answer-option {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.answer-option:hover {
+  background-color: #1e40af;
+  transform: translateX(4px);
+}
+
+.answer-option.selected {
+  background-color: #1e40af;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+/* Form styling */
+.form-input {
+  transition: all 0.2s ease-in-out;
+}
+
+.form-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Button animations */
+.btn-primary {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Status badges */
+.status-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Assignment cards */
+.assignment-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.assignment-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Table row hover effects */
+.table-row {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.table-row:hover {
+  background-color: #1e40af;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Grade colors */
+.grade-a {
+  color: #10b981;
+}
+
+.grade-b {
+  color: #3b82f6;
+}
+
+.grade-c {
+  color: #f59e0b;
+}
+
+.grade-d {
+  color: #f97316;
+}
+
+.grade-f {
+  color: #ef4444;
+}
+
+/* Time remaining indicators */
+.time-urgent {
+  color: #ef4444;
+  animation: pulse 1.5s infinite;
+}
+
+.time-warning {
+  color: #f59e0b;
+}
+
+.time-normal {
+  color: #10b981;
+}
+
+/* Question types */
+.question-multiple-choice {
+  border-left: 4px solid #3b82f6;
+}
+
+.question-true-false {
+  border-left: 4px solid #10b981;
+}
+
+.question-essay {
+  border-left: 4px solid #f59e0b;
+}
+
+.question-short-answer {
+  border-left: 4px solid #8b5cf6;
+}
+
+/* Submission status */
+.submission-pending {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
+
+.submission-submitted {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.submission-graded {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.submission-late {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .btn-group button {
+    width: 100%;
+  }
+}
+
+/* Accessibility improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus indicators */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Keyboard navigation */
+.answer-option:focus {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .bg-blue-900 {
+    background-color: white !important;
+    color: black !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .auto-dark {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    border: 2px solid currentColor;
+  }
+  
+  .status-badge {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom animations for assignment creation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.assignment-created {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Question transition effects */
+.question-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.question-transition.enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.question-transition.enter-active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.question-transition.exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.question-transition.exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* Auto-save indicator */
+.auto-save {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Error states */
+.error-state {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Success states */
+.success-state {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.success-message {
+  color: #10b981;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #1e40af 25%, #3b82f6 50%, #1e40af 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+

@@ -1,0 +1,32 @@
+@instructor_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzUwNTdmNy0wZmE3LTRmMDgtOTY0Yy1jMjI1YjY5N2UzNjQiLCJlbWFpbCI6Imluc3RydWN0b3JAZXhhbXBsZS5jb20iLCJyb2xlIjoiSU5TVFJVQ1RPUiIsImlhdCI6MTc1MTYxMjI5MywiZXhwIjoxNzUxNjEzMTkzfQ.LDTMhOhglD7a27VhEsuPBBt4lbX-0xKaQbYdNixDPwU
+
+### Upload a file to Cloudinary via Content Module
+POST http://localhost:3000/api/v1/content/upload
+Authorization: Bearer {{instructor_token}}
+Content-Type: multipart/form-data; boundary=---011000010111000001101001
+
+-----011000010111000001101001
+Content-Disposition: form-data; name="file"; filename="your-document.pdf"
+Content-Type: application/pdf
+
+< /home/max/Documents/Untitled document (1).pdf
+-----011000010111000001101001--
+
+
+
+
+
+
+
+
+
+
+## add a file to the content module
+curl -X POST http://localhost:3000/api/v1/content/upload \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYzA4OTAxZi0yYzVmLTQ1NzAtYmUwNS1iMmZiMTc2N2Y5Y2MiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzUxNjUzMTkxLCJleHAiOjE3NTE2NjAzOTF9.HhVwG2HJY8SQ241e9qUX4Hi-V3XWfJWtvCC24DqdCl8" \
+  -F "file=@/home/max/Documents/test.pdf"
+
+# Instructions:
+# 1. Replace {{jwt}} with your valid admin/instructor token.
+# 2. Replace ./path/to/your-document.pdf with the path to a document on your laptop.
+# 3. You can change the filename and Content-Type as needed for other file types (e.g., .docx, .png, .mp4). 

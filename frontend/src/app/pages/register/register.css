@@ -1,0 +1,327 @@
+/* Register Page Styles */
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Form animations */
+.bg-blue-900 {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.bg-blue-800 {
+  animation: slideInFromLeft 0.8s ease-out;
+}
+
+/* Input focus effects */
+input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button hover effects */
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Social registration button effects */
+.grid button:hover {
+  transform: scale(1.05);
+}
+
+/* Loading spinner animation */
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Success/Error message animations */
+.bg-green-900, .bg-red-900 {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Password toggle button */
+.absolute button:hover {
+  transform: scale(1.1);
+}
+
+/* Checkbox custom styling */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #1e40af;
+  border-radius: 3px;
+  background-color: #1e3a8a;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: -2px;
+  left: 1px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Radio button custom styling */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+/* Password strength indicator */
+.password-strength-bar {
+  transition: all 0.3s ease;
+}
+
+.password-strength-bar.bg-red-500 {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.password-strength-bar.bg-orange-500 {
+  background: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+}
+
+.password-strength-bar.bg-yellow-500 {
+  background: linear-gradient(90deg, #eab308 0%, #ca8a04 100%);
+}
+
+.password-strength-bar.bg-blue-500 {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.password-strength-bar.bg-green-500 {
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+}
+
+/* Role selection cards */
+.role-card {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.role-card:hover::before {
+  left: 100%;
+}
+
+.role-card.selected {
+  border-color: #3b82f6;
+  background-color: #1e40af;
+  transform: scale(1.02);
+}
+
+/* Password requirements list */
+.password-requirements {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.password-requirements .fas.fa-check {
+  animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .max-w-2xl {
+    margin: 0 1rem;
+  }
+  
+  .p-8 {
+    padding: 1.5rem;
+  }
+  
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+  
+  .grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .grid-cols-1.md\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .space-y-8 > * + * {
+    margin-top: 1.5rem;
+  }
+  
+  .space-y-6 > * + * {
+    margin-top: 1rem;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .bg-blue-900 {
+    background-color: #1e3a8a;
+  }
+  
+  .bg-blue-800 {
+    background-color: #1e40af;
+  }
+}
+
+/* Accessibility improvements */
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+input:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e3a8a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Benefits section styling */
+.benefits-section {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
+
+.benefits-section .fas {
+  transition: transform 0.3s ease;
+}
+
+.benefits-section .flex:hover .fas {
+  transform: scale(1.1);
+}
+
+/* Form validation animations */
+.error-message {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Success state animations */
+.success-state {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+

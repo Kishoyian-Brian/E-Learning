@@ -1,0 +1,226 @@
+/* Navbar Component Styles */
+
+/* Sticky navbar with backdrop blur */
+nav {
+  backdrop-filter: blur(10px);
+  background-color: rgba(30, 41, 59, 0.95);
+}
+
+/* Logo animation */
+.logo-container {
+  transition: transform 0.3s ease-in-out;
+}
+
+.logo-container:hover {
+  transform: scale(1.05);
+}
+
+/* Navigation link hover effects */
+.nav-link {
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #3b82f6;
+  transition: all 0.3s ease-in-out;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Search dropdown animation */
+.search-dropdown {
+  animation: slideDown 0.3s ease-in-out;
+  transform-origin: top right;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* User menu dropdown animation */
+.user-dropdown {
+  animation: slideDown 0.3s ease-in-out;
+  transform-origin: top right;
+}
+
+/* Notification badge pulse */
+.notification-badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+/* Cart badge animation */
+.cart-badge {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Mobile menu slide animation */
+.mobile-menu {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button hover effects */
+.btn-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Search input focus effect */
+.search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* User avatar hover effect */
+.user-avatar {
+  transition: transform 0.2s ease-in-out;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+/* Dropdown menu items hover */
+.dropdown-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  transform: translateX(5px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none;
+  }
+  
+  .mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(30, 41, 59, 0.98);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-menu-button {
+    display: none;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .nav-link,
+  .btn-hover,
+  .dropdown-item {
+    transition: none;
+  }
+  
+  .notification-badge,
+  .cart-badge {
+    animation: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  nav {
+    border-bottom: 2px solid #fff;
+  }
+  
+  .nav-link {
+    border: 1px solid transparent;
+  }
+  
+  .nav-link:hover {
+    border-color: #fff;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+.nav-link:focus,
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  nav {
+    background-color: rgba(15, 23, 42, 0.95);
+  }
+}
+
+/* Print styles */
+@media print {
+  nav {
+    display: none;
+  }
+}
+
+.active-nav-item {
+  background: linear-gradient(90deg, #2563eb 80%, #1e293b 100%);
+  color: #fff !important;
+  font-weight: bold;
+  border-left: 4px solid #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+}

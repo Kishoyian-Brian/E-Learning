@@ -1,0 +1,200 @@
+<div class="min-h-screen bg-gradient-to-b from-blue-900 to-blue-950 text-white py-12">
+  <div class="max-w-3xl mx-auto p-8 rounded-2xl shadow-lg bg-blue-800/80 border border-blue-700">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold">Course Discussions</h1>
+        <p class="text-blue-300 mt-1">Engage with your peers and instructors</p>
+    </div>
+      <button (click)="toggleCreateForm()" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-semibold shadow transition" [disabled]="loading">
+        <i class="fas fa-plus mr-2"></i> New Discussion
+    </button>
+  </div>
+
+  <!-- Create Discussion Form -->
+    <div *ngIf="showCreateForm" class="mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h3 class="text-lg font-semibold mb-4">Create New Discussion</h3>
+      <form [formGroup]="createForm" (ngSubmit)="createDiscussion()">
+        <div class="mb-4">
+          <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+            <input type="text" id="title" formControlName="title" class="form-input" placeholder="Enter discussion title" maxlength="200">
+          <div *ngIf="createForm.get('title')?.invalid && createForm.get('title')?.touched" class="error-message">
+            Title is required and must be less than 200 characters
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+          <select id="category" formControlName="category" class="form-select">
+            <option value="GENERAL">General</option>
+            <option value="Q&A">Q&A</option>
+            <option value="STUDY_TIPS">Study Tips</option>
+            <option value="RESOURCE">Resource</option>
+            <option value="CHALLENGE">Challenge</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+            <textarea id="content" formControlName="content" rows="4" class="form-textarea" placeholder="Share your thoughts, questions, or resources..." maxlength="5000"></textarea>
+          <div *ngIf="createForm.get('content')?.invalid && createForm.get('content')?.touched" class="error-message">
+            Content is required and must be less than 5000 characters
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3">
+            <button type="button" (click)="toggleCreateForm()" class="btn-secondary">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="createForm.invalid || loading">
+            <span *ngIf="loading" class="spinner mr-2"></span>
+            Create Discussion
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Filters -->
+    <div class="bg-blue-900/80 rounded-xl p-6 mb-8 border border-blue-700">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <select [(ngModel)]="filters.category" class="bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700">
+            <option value="">All Categories</option>
+            <option value="GENERAL">General</option>
+            <option value="Q&A">Q&A</option>
+            <option value="STUDY_TIPS">Study Tips</option>
+            <option value="RESOURCE">Resource</option>
+            <option value="CHALLENGE">Challenge</option>
+          </select>
+        <select [(ngModel)]="filters.isResolved" class="bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700">
+            <option value="">All</option>
+            <option value="false">Unresolved</option>
+            <option value="true">Resolved</option>
+          </select>
+        <select [(ngModel)]="filters.sortBy" class="bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700">
+            <option value="createdAt">Date</option>
+            <option value="upvotes">Votes</option>
+            <option value="viewCount">Views</option>
+          </select>
+        <select [(ngModel)]="filters.sortOrder" class="bg-blue-800 text-white px-4 py-2 rounded-lg border border-blue-700">
+            <option value="desc">Newest First</option>
+            <option value="asc">Oldest First</option>
+          </select>
+        </div>
+      <div class="flex justify-end mt-4 space-x-2">
+        <button (click)="clearFilters()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">Clear Filters</button>
+        <button (click)="applyFilters()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Apply Filters</button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+    <div *ngIf="error" class="error-container mb-6">
+    <div class="bg-red-50 border border-red-200 rounded-md p-4">
+      <div class="flex">
+        <i class="fas fa-exclamation-circle text-red-400 mt-1"></i>
+        <div class="ml-3">
+          <p class="text-sm text-red-800">{{ error }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+    <div *ngIf="loading && discussions.length === 0" class="flex justify-center items-center py-12">
+      <div class="spinner"></div>
+      <span class="ml-3 text-blue-200">Loading discussions...</span>
+    </div>
+
+    <!-- No Discussions -->
+    <div *ngIf="!loading && discussions.length === 0" class="flex flex-col items-center py-16">
+      <div class="text-6xl text-blue-400 mb-4">
+        <i class="fas fa-comments"></i>
+  </div>
+      <h2 class="text-xl font-semibold mb-2">No discussions yet</h2>
+      <p class="text-blue-300 mb-4">Be the first to start a discussion!</p>
+      <button (click)="toggleCreateForm()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold shadow transition">
+        <i class="fas fa-plus mr-2"></i>Start a Discussion
+      </button>
+  </div>
+
+    <!-- Discussions List -->
+  <div *ngIf="discussions.length > 0" class="discussions-list">
+    <div *ngFor="let discussion of discussions" class="discussion-card">
+      <div class="discussion-header">
+        <div class="discussion-meta">
+          <div class="discussion-title">
+              <h3 class="text-lg font-semibold text-gray-900 cursor-pointer hover:text-blue-600" (click)="viewDiscussion(discussion)">
+              {{ discussion.title }}
+            </h3>
+            <div class="discussion-badges">
+              <span [class]="'badge ' + getCategoryClass(discussion.category)">
+                {{ getCategoryDisplayName(discussion.category) }}
+              </span>
+              <span *ngIf="discussion.isPinned" class="badge bg-yellow-100 text-yellow-800">
+                <i class="fas fa-thumbtack mr-1"></i>Pinned
+              </span>
+              <span *ngIf="discussion.isResolved" class="badge bg-green-100 text-green-800">
+                <i class="fas fa-check-circle mr-1"></i>Resolved
+              </span>
+              <span *ngIf="discussion.isLocked" class="badge bg-red-100 text-red-800">
+                <i class="fas fa-lock mr-1"></i>Locked
+              </span>
+            </div>
+          </div>
+          <div class="discussion-author">
+            <span class="text-sm text-gray-600">
+              by {{ discussion.user.firstName }} {{ discussion.user.lastName }}
+            </span>
+            <span class="text-sm text-gray-500 ml-2">
+              {{ getTimeAgo(discussion.createdAt) }}
+            </span>
+          </div>
+        </div>
+        <div class="discussion-actions" *ngIf="canEditDiscussion(discussion) || canDeleteDiscussion(discussion)">
+          <div class="dropdown">
+            <button class="btn-icon" (click)="$event.stopPropagation()">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <div class="dropdown-menu">
+              <button *ngIf="canEditDiscussion(discussion)" class="dropdown-item">
+                <i class="fas fa-edit mr-2"></i>Edit
+              </button>
+              <button *ngIf="canDeleteDiscussion(discussion)" 
+                      (click)="deleteDiscussion(discussion)" 
+                      class="dropdown-item text-red-600">
+                <i class="fas fa-trash mr-2"></i>Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="discussion-content">
+        <p class="text-gray-700 line-clamp-3">{{ discussion.content }}</p>
+      </div>
+
+      <div class="discussion-footer">
+        <div class="discussion-stats">
+          <div class="stat-item">
+            <i class="fas fa-eye text-gray-400"></i>
+            <span class="text-sm text-gray-600">{{ discussion.viewCount }} views</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-comment text-gray-400"></i>
+            <span class="text-sm text-gray-600">{{ discussion.replies.length }} replies</span>
+          </div>
+        </div>
+        <div class="discussion-votes">
+          <button (click)="voteDiscussion(discussion, 'UPVOTE')" 
+                  class="vote-btn"
+                  [class.voted]="hasUserVoted(discussion, 'UPVOTE')">
+            <i class="fas fa-arrow-up"></i>
+            <span>{{ discussion.upvotes }}</span>
+          </button>
+          <button (click)="voteDiscussion(discussion, 'DOWNVOTE')" 
+                  class="vote-btn"
+                  [class.voted]="hasUserVoted(discussion, 'DOWNVOTE')">
+            <i class="fas fa-arrow-down"></i>
+            <span>{{ discussion.downvotes }}</span>
+          </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
